@@ -3,5 +3,5 @@
 - use gsap animations and some scroll animations for better experience and attractions
 
 things we do deliver
-- vegetables, soft drinks, fruits, groceries, snacks, cooking oil, etc
+- Mayai, Fruits, Vegetables, Tissues, Toilet paper, Rice, Beans, Water, Soft drinks
 - to hotels, offices, construction sites etc

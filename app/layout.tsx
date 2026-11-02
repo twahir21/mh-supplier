@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Manrope } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import { CartProvider } from "@/context/CartContext";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -16,7 +17,7 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://mhgeneralsuppliers.com"),
+  metadataBase: new URL("https://mhsuppliers.co.tz"),
   title: "MH General Suppliers | Fresh Produce, Beverages & Bulk Commercial Supplies",
   description:
     "Leading wholesale distributor of farm-fresh vegetables, seasonal fruits, soft drinks, groceries, snacks, and cooking oils to hotels, corporate offices, and construction sites.",
@@ -50,7 +51,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bricolage.variable} ${manrope.variable}`}>
       <body className="antialiased selection:bg-amber-400 selection:text-slate-900">
-        <SmoothScroll>{children}</SmoothScroll>
+        <SmoothScroll>
+          <CartProvider>{children}</CartProvider>
+        </SmoothScroll>
       </body>
     </html>
   );

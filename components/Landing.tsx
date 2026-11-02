@@ -2,16 +2,11 @@
 
 import { useEffect, useRef, useState, useMemo } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import confetti from "canvas-confetti";
 import {
-  Apple,
-  Carrot,
-  CupSoda,
-  Wheat,
-  Cookie,
-  Droplets,
   Building2,
   HardHat,
   Hotel,
@@ -26,7 +21,6 @@ import {
   ArrowRight,
   ChevronDown,
   Search,
-  Filter,
   Plus,
   Minus,
   Sparkles,
@@ -38,484 +32,21 @@ import {
   X,
   FileSpreadsheet,
   ChevronUp,
+  MessageSquare,
   type LucideIcon,
 } from "lucide-react";
 import { useLenis } from "@/components/SmoothScroll";
+import { useCart } from "@/context/CartContext";
+import {
+  PRODUCTS,
+  CATEGORIES,
+  SECTORS,
+  SMART_PRESETS,
+} from "@/data/catalogData";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
-
-// ----------------------------------------------------
-// TYPES
-// ----------------------------------------------------
-type SectorId = "all" | "hotels" | "offices" | "construction" | "catering";
-type CategoryId = "all" | "vegetables" | "fruits" | "beverages" | "groceries" | "snacks" | "cooking_oil";
-
-type Product = {
-  id: string;
-  name: string;
-  category: CategoryId;
-  categoryName: string;
-  packSize: string;
-  priceEstimate: string;
-  grade: string;
-  inStock: boolean;
-  sectors: SectorId[];
-  description: string;
-  icon: LucideIcon;
-  badge?: string;
-};
-
-// ----------------------------------------------------
-// DATA: PRODUCTS (Directly aligned with README.md)
-// ----------------------------------------------------
-const PRODUCTS: Product[] = [
-  // Vegetables
-  {
-    id: "veg-1",
-    name: "Grade-A Roma Tomatoes",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "25kg Wooden Crate",
-    priceEstimate: "TZS 45,000 / crate",
-    grade: "Export Grade • Uniform Ripeness",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Daily harvested, chef-grade firm tomatoes sorted for maximum kitchen shelf-life.",
-    icon: Carrot,
-    badge: "Best Seller",
-  },
-  {
-    id: "veg-2",
-    name: "Red & Yellow Bulb Onions",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "50kg Net Sack",
-    priceEstimate: "TZS 85,000 / sack",
-    grade: "Cured & Graded Clean",
-    inStock: true,
-    sectors: ["hotels", "construction", "catering"],
-    description: "Dry-cured commercial onions with tight skins, ideal for bulk culinary preparation.",
-    icon: Carrot,
-  },
-  {
-    id: "veg-3",
-    name: "Crisp Green & Red Bell Peppers",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "10kg Box",
-    priceEstimate: "TZS 28,000 / box",
-    grade: "Greenhouse Grown",
-    inStock: true,
-    sectors: ["hotels", "catering"],
-    description: "Thick-walled, vibrant sweet peppers hand-selected for hotel salads and buffets.",
-    icon: Carrot,
-  },
-  {
-    id: "veg-4",
-    name: "Dutch Ware Cooking Potatoes",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "50kg Heavy Sack",
-    priceEstimate: "TZS 65,000 / sack",
-    grade: "Grade 1 Starch Variety",
-    inStock: true,
-    sectors: ["hotels", "construction", "catering"],
-    description: "Washed and graded potatoes perfect for high-yield frying, boiling, and roasting.",
-    icon: Carrot,
-  },
-  {
-    id: "veg-5",
-    name: "Fresh Farm Carrots",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "25kg Mesh Sack",
-    priceEstimate: "TZS 38,000 / sack",
-    grade: "Sweet High-Sugar Variety",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Crisp, washed sweet carrots harvested fresh from partner highland growers.",
-    icon: Carrot,
-  },
-  {
-    id: "veg-6",
-    name: "Highland Cabbage & Spinach Bundle",
-    category: "vegetables",
-    categoryName: "Fresh Vegetables",
-    packSize: "30kg Mixed Crate",
-    priceEstimate: "TZS 32,000 / crate",
-    grade: "Daily Cut Freshness",
-    inStock: true,
-    sectors: ["hotels", "construction", "catering"],
-    description: "High-yield hearty cabbage heads and tender dark greens for institutional kitchens.",
-    icon: Carrot,
-  },
-
-  // Fruits
-  {
-    id: "fruit-1",
-    name: "Sweet Cavendish Bananas",
-    category: "fruits",
-    categoryName: "Fresh Fruits",
-    packSize: "20kg Padded Crate",
-    priceEstimate: "TZS 26,000 / crate",
-    grade: "Stage 3-4 Breakfast Ready",
-    inStock: true,
-    sectors: ["hotels", "offices", "catering"],
-    description: "Naturally ripened, unbruised bananas for hotel buffets and corporate pantry baskets.",
-    icon: Apple,
-    badge: "Popular",
-  },
-  {
-    id: "fruit-2",
-    name: "Sweet Coastal Pineapples",
-    category: "fruits",
-    categoryName: "Fresh Fruits",
-    packSize: "Box of 10 Jumbo",
-    priceEstimate: "TZS 30,000 / box",
-    grade: "High Brix Sweetness",
-    inStock: true,
-    sectors: ["hotels", "catering", "offices"],
-    description: "Golden ripe coastal pineapples selected for juicing and fresh fruit displays.",
-    icon: Apple,
-  },
-  {
-    id: "fruit-3",
-    name: "Crisp Royal Gala Apples",
-    category: "fruits",
-    categoryName: "Fresh Fruits",
-    packSize: "18kg Export Carton",
-    priceEstimate: "TZS 72,000 / carton",
-    grade: "Class 1 Waxed",
-    inStock: true,
-    sectors: ["hotels", "offices"],
-    description: "Uniformly sized crunchy sweet apples, ideal for executive meetings and guest fruit platters.",
-    icon: Apple,
-  },
-  {
-    id: "fruit-4",
-    name: "Tropical Seedless Watermelons",
-    category: "fruits",
-    categoryName: "Fresh Fruits",
-    packSize: "Bulk Crate (~100kg)",
-    priceEstimate: "TZS 80,000 / crate",
-    grade: "Deep Red Crimson Sweet",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Heavy, hydrating fresh melons for large-scale catering and site refreshments.",
-    icon: Apple,
-  },
-
-  // Soft Drinks & Beverages
-  {
-    id: "bev-1",
-    name: "Natural Spring Water 500ml",
-    category: "beverages",
-    categoryName: "Soft Drinks & Beverages",
-    packSize: "Shrink Pack (24 Bottles)",
-    priceEstimate: "TZS 10,500 / pack",
-    grade: "Purified & Certified",
-    inStock: true,
-    sectors: ["offices", "construction", "hotels", "catering"],
-    description: "Essential hydration cartons for office boardrooms, desks, and construction site workers.",
-    icon: CupSoda,
-    badge: "Volume Staple",
-  },
-  {
-    id: "bev-2",
-    name: "Assorted Coca-Cola Sodas 350ml",
-    category: "beverages",
-    categoryName: "Soft Drinks & Beverages",
-    packSize: "Crate (24 Cans/Bottles)",
-    priceEstimate: "TZS 22,000 / crate",
-    grade: "Original Factory Sealed",
-    inStock: true,
-    sectors: ["offices", "hotels", "construction"],
-    description: "Full variety including Coke, Sprite, Fanta, and Stoney Tangawizi.",
-    icon: CupSoda,
-  },
-  {
-    id: "bev-3",
-    name: "100% Pure Tropical Fruit Juices 1L",
-    category: "beverages",
-    categoryName: "Soft Drinks & Beverages",
-    packSize: "Carton (12 x 1L)",
-    priceEstimate: "TZS 36,000 / carton",
-    grade: "No Added Sugar",
-    inStock: true,
-    sectors: ["hotels", "offices", "catering"],
-    description: "Mango, Passion, Orange, and Guava blends for breakfast bars and executive lounges.",
-    icon: CupSoda,
-  },
-  {
-    id: "bev-4",
-    name: "Electrolyte Hydration & Energy Cans",
-    category: "beverages",
-    categoryName: "Soft Drinks & Beverages",
-    packSize: "Carton of 24 Cans",
-    priceEstimate: "TZS 48,000 / carton",
-    grade: "Rapid Electrolyte Refill",
-    inStock: true,
-    sectors: ["construction", "offices"],
-    description: "High-demand energy and hydration cans for heavy construction shift teams.",
-    icon: CupSoda,
-  },
-
-  // Wholesale Groceries
-  {
-    id: "groc-1",
-    name: "Aromatic Basmati Rice Grade-1",
-    category: "groceries",
-    categoryName: "Wholesale Groceries",
-    packSize: "25kg Double Bag",
-    priceEstimate: "TZS 78,000 / sack",
-    grade: "Extra Long Grain (0% Broken)",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Premium fragrant aged rice delivering superior fluffiness for restaurants and hotel menus.",
-    icon: Wheat,
-    badge: "Top Rated",
-  },
-  {
-    id: "groc-2",
-    name: "Commercial Baker's Wheat Flour",
-    category: "groceries",
-    categoryName: "Wholesale Groceries",
-    packSize: "25kg Heavy Kraft Sack",
-    priceEstimate: "TZS 48,000 / sack",
-    grade: "High Gluten Protein",
-    inStock: true,
-    sectors: ["hotels", "catering"],
-    description: "Fortified white wheat flour for pastry chefs, bread ovens, and commercial kitchens.",
-    icon: Wheat,
-  },
-  {
-    id: "groc-3",
-    name: "Polished Red Kidney Beans",
-    category: "groceries",
-    categoryName: "Wholesale Groceries",
-    packSize: "50kg Woven Sack",
-    priceEstimate: "TZS 115,000 / sack",
-    grade: "Machine Cleaned & De-stoned",
-    inStock: true,
-    sectors: ["construction", "hotels", "catering"],
-    description: "Nutritious dried beans with quick-cook properties, perfect for staff mess halls.",
-    icon: Wheat,
-  },
-  {
-    id: "groc-4",
-    name: "Pure Refined Cane Sugar",
-    category: "groceries",
-    categoryName: "Wholesale Groceries",
-    packSize: "50kg Industrial Bag",
-    priceEstimate: "TZS 130,000 / bag",
-    grade: "Fine Crystal White",
-    inStock: true,
-    sectors: ["hotels", "offices", "catering"],
-    description: "High-grade pure crystal sugar for beverage service, baking, and office pantries.",
-    icon: Wheat,
-  },
-
-  // Snacks & Breakroom
-  {
-    id: "snack-1",
-    name: "Executive Biscuit & Cookie Assortment",
-    category: "snacks",
-    categoryName: "Snacks & Breakroom",
-    packSize: "Master Case (48 Individual Packs)",
-    priceEstimate: "TZS 34,000 / case",
-    grade: "Premium Tea Companions",
-    inStock: true,
-    sectors: ["offices", "hotels"],
-    description: "Shortbread, cream biscuits, and digestive cookies packaged for corporate tea stations.",
-    icon: Cookie,
-    badge: "Office Favorite",
-  },
-  {
-    id: "snack-2",
-    name: "Roasted Cashews & Salted Peanuts",
-    category: "snacks",
-    categoryName: "Snacks & Breakroom",
-    packSize: "Tub of 24 x 50g Pouches",
-    priceEstimate: "TZS 42,000 / tub",
-    grade: "Grade-1 Jumbo Kernels",
-    inStock: true,
-    sectors: ["offices", "hotels"],
-    description: "Freshly roasted and vacuum-sealed energy snacks for desk refuels and hotel minibars.",
-    icon: Cookie,
-  },
-  {
-    id: "snack-3",
-    name: "Premium Roast Coffee & Spiced Tea Kit",
-    category: "snacks",
-    categoryName: "Snacks & Breakroom",
-    packSize: "Monthly Breakroom Pack (5kg)",
-    priceEstimate: "TZS 68,000 / pack",
-    grade: "Arabica & Tangawizi Tea",
-    inStock: true,
-    sectors: ["offices", "hotels"],
-    description: "Complete pantry setup with fresh ground Arabica coffee and traditional spiced tea leaves.",
-    icon: Cookie,
-  },
-
-  // Cooking Oil
-  {
-    id: "oil-1",
-    name: "Pure Refined Sunflower Cooking Oil",
-    category: "cooking_oil",
-    categoryName: "Cooking Oil & Culinary Fats",
-    packSize: "20L Heavy Duty Jerrycan",
-    priceEstimate: "TZS 75,000 / 20L",
-    grade: "Triple Refined • High Smoke Point",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Zero-cholesterol light golden oil with neutral aroma, ideal for hotel deep frying and sautéing.",
-    icon: Droplets,
-    badge: "Kitchen Core",
-  },
-  {
-    id: "oil-2",
-    name: "All-Purpose Commercial Vegetable Oil",
-    category: "cooking_oil",
-    categoryName: "Cooking Oil & Culinary Fats",
-    packSize: "10L Sealed Jug",
-    priceEstimate: "TZS 39,000 / 10L",
-    grade: "Fortified with Vitamin A",
-    inStock: true,
-    sectors: ["hotels", "catering", "construction"],
-    description: "Economical and stable cooking oil tailored for continuous commercial frying operations.",
-    icon: Droplets,
-  },
-  {
-    id: "oil-3",
-    name: "Commercial Culinary Shortening & Margarine",
-    category: "cooking_oil",
-    categoryName: "Cooking Oil & Culinary Fats",
-    packSize: "15kg Solid Block",
-    priceEstimate: "TZS 58,000 / block",
-    grade: "High Melting Point Bakery Fat",
-    inStock: true,
-    sectors: ["hotels", "catering"],
-    description: "Specially formulated shortening for fluffy bakery pastries and industrial food service.",
-    icon: Droplets,
-  },
-];
-
-// ----------------------------------------------------
-// SECTORS DETAILS (Hotels, Offices, Construction, Catering)
-// ----------------------------------------------------
-const SECTORS = [
-  {
-    id: "hotels",
-    title: "Hotels & Resorts",
-    tagline: "Dawn delivery before kitchen prep starts",
-    icon: Hotel,
-    accent: "from-blue-600 to-indigo-700",
-    description:
-      "We understand luxury hospitality standards: calibrated ripeness, uniform fruit cuts, pristine greens, and delivery by 5:30 AM directly to your executive kitchen loading dock.",
-    perks: [
-      "Guaranteed 5:00 AM - 6:30 AM dock delivery",
-      "Rigid grading for banquet & buffet presentations",
-      "100% same-day replacement for any substandard crate",
-      "Net-30 consolidated accounting with itemized POs",
-    ],
-    popularItems: ["Roma Tomatoes", "Cavendish Bananas", "Pure Sunflower Oil 20L", "Basmati Rice"],
-  },
-  {
-    id: "offices",
-    title: "Corporate Offices & Campuses",
-    tagline: "Stress-free breakroom and pantry replenishment",
-    icon: Building2,
-    accent: "from-emerald-600 to-teal-700",
-    description:
-      "Keep your teams energized and hydrated. We deliver scheduled weekly fresh fruit crates, mineral water cases, sodas, premium coffee, tea, and healthy snack assortments.",
-    perks: [
-      "Weekly scheduled standing order drops",
-      "Direct floor-by-floor pantry restocking available",
-      "Curated fresh seasonal fruit baskets for wellness",
-      "Single monthly corporate invoice for all pantry needs",
-    ],
-    popularItems: ["Natural Spring Water 500ml", "Royal Gala Apples", "Executive Biscuit Case", "Roast Coffee Kit"],
-  },
-  {
-    id: "construction",
-    title: "Construction Sites & Camps",
-    tagline: "Heavy-duty bulk rations and hydration at scale",
-    icon: HardHat,
-    accent: "from-amber-600 to-orange-700",
-    description:
-      "Feeding 50 to 500+ site workers demands reliability and bulk pricing. We dispatch forklift-ready pallets of 50kg grain sacks, bulk cooking oil, beans, and hydration crates.",
-    perks: [
-      "All-weather rugged packaging (double-stitched sacks)",
-      "High-volume pallet drops directly onto site",
-      "Bulk hydration supplies to prevent heat fatigue",
-      "Flexible delivery access to restricted industrial sites",
-    ],
-    popularItems: ["50kg Potatoes", "50kg Kidney Beans", "20L Cooking Oil", "Mineral Water 500ml"],
-  },
-  {
-    id: "catering",
-    title: "Commercial Caterers & Institutions",
-    tagline: "Just-in-time ingredients with predictable wholesale margins",
-    icon: UtensilsCrossed,
-    accent: "from-slate-700 to-slate-900",
-    description:
-      "High volume, tight deadlines, and strict cost controls. We supply restaurants, hospitals, school dining halls, and event caterers with wholesale commodities.",
-    perks: [
-      "Transparent tiered volume discounts",
-      "Daily replenishment orders via WhatsApp or portal",
-      "Chef-tested cooking fats and staple flours",
-      "Reliable delivery regardless of rain or market spikes",
-    ],
-    popularItems: ["Baker's Wheat Flour 25kg", "Roma Tomatoes", "Refined Cane Sugar 50kg", "Sunflower Oil 20L"],
-  },
-];
-
-// ----------------------------------------------------
-// SMART LIST ASSISTANT PRESETS
-// ----------------------------------------------------
-const SMART_PRESETS = [
-  {
-    title: "🏨 Luxury Hotel 7-Day Breakfast (150 Guests)",
-    sector: "hotels",
-    note: "Chef-selected fresh fruits, vegetables, beverages & culinary oils",
-    items: [
-      { name: "Grade-A Roma Tomatoes", qty: "4 crates (100kg)" },
-      { name: "Sweet Cavendish Bananas", qty: "6 crates (120kg)" },
-      { name: "Sweet Coastal Pineapples", qty: "4 boxes (40 count)" },
-      { name: "100% Pure Tropical Fruit Juices", qty: "8 cartons (96L)" },
-      { name: "Pure Refined Sunflower Oil", qty: "3 jerrycans (60L)" },
-      { name: "Aromatic Basmati Rice", qty: "4 sacks (100kg)" },
-    ],
-  },
-  {
-    title: "🏢 Corporate Office Monthly Pantry (80 Staff)",
-    sector: "offices",
-    note: "All-in-one monthly water, beverages, weekly fruit crates & snacks",
-    items: [
-      { name: "Natural Spring Water 500ml", qty: "20 cartons (480 bottles)" },
-      { name: "Assorted Coca-Cola Sodas", qty: "8 crates (192 cans)" },
-      { name: "Crisp Royal Gala Apples", qty: "3 cartons (54kg)" },
-      { name: "Sweet Cavendish Bananas", qty: "4 crates (80kg)" },
-      { name: "Executive Biscuit Assortment", qty: "4 cases (192 packs)" },
-      { name: "Coffee & Spiced Tea Kit", qty: "2 master packs" },
-    ],
-  },
-  {
-    title: "🏗️ Construction Site Mess Hall (100 Workers)",
-    sector: "construction",
-    note: "Heavy bulk staple grains, cooking oil, beans & daily hydration",
-    items: [
-      { name: "Dutch Ware Potatoes", qty: "8 sacks (400kg)" },
-      { name: "Polished Red Kidney Beans", qty: "4 sacks (200kg)" },
-      { name: "All-Purpose Cooking Oil", qty: "6 drums (120L)" },
-      { name: "Red & Yellow Onions", qty: "4 sacks (200kg)" },
-      { name: "Natural Spring Water 500ml", qty: "30 cartons (720 bottles)" },
-      { name: "Electrolyte Hydration Cans", qty: "10 cartons (240 cans)" },
-    ],
-  },
-];
 
 // ----------------------------------------------------
 // MAIN COMPONENT
@@ -523,6 +54,22 @@ const SMART_PRESETS = [
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
   const { scrollTo, stop, start } = useLenis();
+
+  // Quotation Cart from shared context
+  const {
+    cart,
+    updateQuantity,
+    setCart,
+    clearCart,
+    totalCartCount,
+    isCartOpen,
+    setIsCartOpen,
+    applyPreset: contextApplyPreset,
+    rfqNotes,
+    setRfqNotes,
+    rfqSector,
+    setRfqSector,
+  } = useCart();
 
   // Scroll Animation Refs
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -534,24 +81,22 @@ export default function Landing() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [scrollPercentage, setScrollPercentage] = useState(0);
 
-  // Filter state
-  const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
-  const [activeSector, setActiveSector] = useState<SectorId>("all");
-  const [searchQuery, setSearchQuery] = useState("");
-
-  // Quotation Cart State
-  const [cart, setCart] = useState<{ [productId: string]: number }>({});
-  const [isCartOpen, setIsCartOpen] = useState(false);
-
   // RFQ Form State
   const [rfqName, setRfqName] = useState("");
   const [rfqCompany, setRfqCompany] = useState("");
   const [rfqContact, setRfqContact] = useState("");
-  const [rfqSector, setRfqSector] = useState("hotels");
   const [rfqFrequency, setRfqFrequency] = useState("Weekly Standing Order");
-  const [rfqNotes, setRfqNotes] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [rfqReference, setRfqReference] = useState("");
+
+  // Wrap applyPreset to also scroll to the RFQ form smoothly
+  const applyPreset = (preset: (typeof SMART_PRESETS)[0]) => {
+    contextApplyPreset(preset);
+    const formEl = document.getElementById("quote-section");
+    if (formEl) {
+      scrollTo("#quote-section");
+    }
+  };
 
   // Active sector tab in Sectors section
   const [selectedSectorTab, setSelectedSectorTab] = useState(0);
@@ -583,13 +128,13 @@ export default function Landing() {
     }
   }, [isCartOpen, stop, start]);
 
-  // Refresh ScrollTrigger calculations on dynamic filter / tab changes
+  // Refresh ScrollTrigger calculations on dynamic tab changes
   useEffect(() => {
     const timer = setTimeout(() => {
       ScrollTrigger.refresh();
     }, 120);
     return () => clearTimeout(timer);
-  }, [activeCategory, activeSector, searchQuery, selectedSectorTab]);
+  }, [selectedSectorTab]);
 
   // Refresh ScrollTrigger when images and full layout finish loading
   useEffect(() => {
@@ -902,70 +447,7 @@ export default function Landing() {
     return () => ctx.revert();
   }, []);
 
-  // Filter products
-  const filteredProducts = useMemo(() => {
-    return PRODUCTS.filter((item) => {
-      const matchesCategory = activeCategory === "all" || item.category === activeCategory;
-      const matchesSector = activeSector === "all" || item.sectors.includes(activeSector);
-      const matchesQuery =
-        !searchQuery.trim() ||
-        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.packSize.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSector && matchesQuery;
-    });
-  }, [activeCategory, activeSector, searchQuery]);
 
-  // Cart operations
-  const updateQuantity = (productId: string, delta: number) => {
-    setCart((prev) => {
-      const current = prev[productId] || 0;
-      const next = current + delta;
-      if (next <= 0) {
-        const copy = { ...prev };
-        delete copy[productId];
-        return copy;
-      }
-      return { ...prev, [productId]: next };
-    });
-  };
-
-  const totalCartCount = useMemo(() => {
-    return Object.values(cart).reduce((a, b) => a + b, 0);
-  }, [cart]);
-
-  // Load Smart Assistant preset into cart & form
-  const applyPreset = (preset: (typeof SMART_PRESETS)[0]) => {
-    const listSummary = preset.items.map((i) => `• ${i.name} (${i.qty})`).join("\n");
-    setRfqSector(preset.sector);
-    setRfqNotes(`Selected Preset: ${preset.title}\n\nRequested Estimate Quantities:\n${listSummary}`);
-
-    // Pre-populate some matching items in cart
-    const newCart = { ...cart };
-    if (preset.sector === "hotels") {
-      newCart["veg-1"] = 4;
-      newCart["fruit-1"] = 6;
-      newCart["oil-1"] = 3;
-      newCart["groc-1"] = 4;
-    } else if (preset.sector === "offices") {
-      newCart["bev-1"] = 20;
-      newCart["bev-2"] = 8;
-      newCart["fruit-3"] = 3;
-      newCart["snack-1"] = 4;
-    } else if (preset.sector === "construction") {
-      newCart["veg-4"] = 8;
-      newCart["groc-3"] = 4;
-      newCart["oil-2"] = 6;
-      newCart["bev-1"] = 30;
-    }
-    setCart(newCart);
-
-    // Smooth scroll to RFQ form
-    const formEl = document.getElementById("quote-section");
-    if (formEl) {
-      formEl.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   // Handle RFQ Submit
   const handleRfqSubmit = (e: React.FormEvent) => {
@@ -1032,16 +514,14 @@ export default function Landing() {
           2. ENTERPRISE HEADER
       ---------------------------------------------------- */}
       <header
-        className={`sticky top-0 z-40 border-b transition-all duration-300 ${
-          isScrolled
+        className={`sticky top-0 z-40 border-b transition-all duration-300 ${isScrolled
             ? "border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-md"
             : "border-slate-200/60 bg-white/90 backdrop-blur-sm"
-        }`}
+          }`}
       >
         <div
-          className={`mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 transition-all duration-300 ${
-            isScrolled ? "h-16" : "h-20"
-          }`}
+          className={`mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 transition-all duration-300 ${isScrolled ? "h-16" : "h-20"
+            }`}
         >
           {/* Logo */}
           <a href="#top" className="flex items-center gap-3 group">
@@ -1066,9 +546,9 @@ export default function Landing() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex" aria-label="Main">
-            <a href="#catalog" className="transition hover:text-[#287A74]">
+            <Link href="/catalog" className="transition hover:text-[#287A74]">
               Wholesale Catalog
-            </a>
+            </Link>
             <a href="#sectors" className="transition hover:text-[#287A74]">
               Sectors We Supply
             </a>
@@ -1157,13 +637,13 @@ export default function Landing() {
                   <ArrowRight size={16} className="transition group-hover:translate-x-1" />
                 </a>
 
-                <a
-                  href="#catalog"
+                <Link
+                  href="/catalog"
                   className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:border-white hover:bg-white/20"
                 >
                   <Search size={16} className="text-amber-300" />
                   <span>Browse Wholesale Catalog</span>
-                </a>
+                </Link>
               </div>
 
               {/* B2B Assurance Bar */}
@@ -1316,287 +796,155 @@ export default function Landing() {
       </section>
 
       {/* ----------------------------------------------------
-          5. FEATURED CATEGORIES SPOTLIGHT
+          5. FEATURED CATEGORIES SHOWCASE & COMMODITY MATRIX
       ---------------------------------------------------- */}
-      <section className="section-reveal py-20">
+      <section className="section-reveal py-20 lg:py-28 bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-              Wholesale Supply Range
-            </span>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full bg-[#287A74]/10 px-4 py-1.5 text-xs font-bold text-[#287A74]">
+              <Sparkles size={14} className="text-emerald-600" />
+              <span className="tracking-wide uppercase">Commercial Supply Directory</span>
+            </div>
+            <h2 className="mt-3 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl tracking-tight">
               Every Category Your Daily Operations Need
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600 text-sm sm:text-base">
-              Combine fresh farm greens, soft drinks, orchard fruits, wholesale grains, snacks, and cooking
-              oils into a single consolidated purchase order.
+            <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
+              Consolidate your institutional procurement under a single master contract. Click any commodity category below to browse specific wholesale pack sizes, grades, and immediate itemized quotations.
             </p>
           </div>
 
-          <div className="categories-container mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-            {[
-              {
-                id: "vegetables" as CategoryId,
-                name: "Fresh Vegetables",
-                count: "6 Varieties",
-                icon: Carrot,
-                color: "bg-emerald-50 text-emerald-700 border-emerald-200",
-              },
-              {
-                id: "fruits" as CategoryId,
-                name: "Seasonal Fruits",
-                count: "4 Varieties",
-                icon: Apple,
-                color: "bg-amber-50 text-amber-700 border-amber-200",
-              },
-              {
-                id: "beverages" as CategoryId,
-                name: "Soft Drinks & Water",
-                count: "4 Varieties",
-                icon: CupSoda,
-                color: "bg-blue-50 text-blue-700 border-blue-200",
-              },
-              {
-                id: "groceries" as CategoryId,
-                name: "Wholesale Grains",
-                count: "4 Varieties",
-                icon: Wheat,
-                color: "bg-orange-50 text-orange-700 border-orange-200",
-              },
-              {
-                id: "snacks" as CategoryId,
-                name: "Office Snacks & Tea",
-                count: "3 Varieties",
-                icon: Cookie,
-                color: "bg-rose-50 text-rose-700 border-rose-200",
-              },
-              {
-                id: "cooking_oil" as CategoryId,
-                name: "Pure Cooking Oils",
-                count: "3 Varieties",
-                icon: Droplets,
-                color: "bg-yellow-50 text-yellow-800 border-yellow-200",
-              },
-            ].map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => {
-                  setActiveCategory(cat.id);
-                  scrollTo("#catalog");
-                }}
-                className={`category-card group flex flex-col items-center justify-between rounded-2xl border p-5 text-center transition duration-300 hover:-translate-y-2 hover:shadow-xl will-change-transform ${
-                  activeCategory === cat.id ? "ring-2 ring-[#287A74] shadow-md" : ""
-                } ${cat.color}`}
-              >
-                <div className="grid h-12 w-12 place-items-center rounded-xl bg-white shadow-sm transition group-hover:scale-110">
-                  <cat.icon size={24} />
-                </div>
-                <div className="mt-4">
-                  <h3 className="font-display text-sm font-bold leading-tight">{cat.name}</h3>
-                  <span className="mt-1 block text-xs opacity-75">{cat.count}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          6. WHOLESALE CATALOG & QUICK-ORDER MATRIX (Core Feature)
-      ---------------------------------------------------- */}
-      <section id="catalog" className="section-reveal border-y border-slate-200 bg-white py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-emerald-700">
-                <Sparkles size={14} /> Commercial Order Matrix
-              </div>
-              <h2 className="mt-1 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-                Wholesale Product Catalog & Pricing
-              </h2>
-              <p className="mt-2 text-slate-600 text-sm sm:text-base">
-                Select quantities to generate an immediate itemized quotation for your accounts department.
-              </p>
-            </div>
-
-            {/* Live Search Input */}
-            <div className="relative w-full md:w-80">
-              <Search
-                size={18}
-                className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
-              />
-              <input
-                type="text"
-                placeholder="Search tomatoes, rice, oil..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm outline-none transition focus:border-[#287A74] focus:bg-white"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 hover:text-slate-600"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Filter Pills & Sector Toggles */}
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-6">
-            {/* Category Pills */}
-            <div className="flex flex-wrap items-center gap-2">
-              {[
-                { id: "all", label: "All Items" },
-                { id: "vegetables", label: "Vegetables" },
-                { id: "fruits", label: "Fruits" },
-                { id: "beverages", label: "Soft Drinks" },
-                { id: "groceries", label: "Groceries & Grains" },
-                { id: "snacks", label: "Snacks & Breakroom" },
-                { id: "cooking_oil", label: "Cooking Oil" },
-              ].map((pill) => (
-                <button
-                  key={pill.id}
-                  onClick={() => setActiveCategory(pill.id as CategoryId)}
-                  className={`rounded-full px-4 py-1.5 text-xs font-bold transition ${
-                    activeCategory === pill.id
-                      ? "bg-[#287A74] text-white shadow-sm"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {pill.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Sector Filter Dropdown / Filter */}
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-              <Filter size={14} className="text-slate-400" />
-              <span>Filter by Destination:</span>
-              <select
-                value={activeSector}
-                onChange={(e) => setActiveSector(e.target.value as SectorId)}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-bold text-[#287A74] outline-none focus:border-[#287A74]"
-              >
-                <option value="all">All Sectors</option>
-                <option value="hotels">Hotels & Resorts</option>
-                <option value="offices">Corporate Offices</option>
-                <option value="construction">Construction Sites</option>
-                <option value="catering">Commercial Catering</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Product Grid */}
-          <div id="catalog-grid" className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredProducts.map((prod) => {
-              const currentQty = cart[prod.id] || 0;
+          {/* High-Visibility Category Showcase Grid */}
+          <div className="categories-container mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            {CATEGORIES.map((cat) => {
+              const IconComp = cat.icon;
               return (
-                <article
-                  key={prod.id}
-                  className="catalog-card group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 transition duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl will-change-transform"
+                <Link
+                  key={cat.id}
+                  href={`/catalog?category=${cat.id}`}
+                  className="category-card group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-7 sm:p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#287A74] hover:shadow-2xl hover:shadow-[#287A74]/15 will-change-transform"
                 >
+                  {/* Decorative ambient gradient backdrop on hover */}
+                  <div
+                    className={`absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br ${cat.accentGradient || "from-[#287A74]/10 to-transparent"} blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`}
+                  />
+
+                  {/* Top colored accent indicator line */}
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#287A74]/30 to-transparent transition-all duration-300 group-hover:h-2 group-hover:via-[#287A74]" />
+
                   <div>
-                    {/* Card Top: Badges & Category */}
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-md bg-[#287A74]/10 px-2.5 py-1 text-[11px] font-bold text-[#287A74]">
-                        <prod.icon size={12} />
-                        {prod.categoryName}
-                      </span>
-                      {prod.badge && (
-                        <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-extrabold text-amber-800">
-                          {prod.badge}
+                    {/* Top Row: Icon and Badges */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div
+                        className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.iconBg || "bg-[#287A74] text-white"} shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
+                      >
+                        <IconComp size={26} />
+                      </div>
+
+                      <div className="flex flex-col items-end gap-1.5">
+                        <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-extrabold text-slate-700 transition-colors group-hover:bg-[#287A74]/10 group-hover:text-[#287A74]">
+                          {cat.count}
                         </span>
-                      )}
-                    </div>
-
-                    {/* Product Name */}
-                    <h3 className="mt-3 font-display text-lg font-bold text-slate-900 group-hover:text-[#287A74] transition">
-                      {prod.name}
-                    </h3>
-                    <p className="mt-1 text-xs text-slate-500 leading-relaxed">{prod.description}</p>
-
-                    {/* Spec / Grade Box */}
-                    <div className="mt-4 rounded-xl bg-slate-50 p-3 text-xs">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-500">Commercial Pack:</span>
-                        <span className="font-bold text-slate-800">{prod.packSize}</span>
-                      </div>
-                      <div className="mt-1 flex items-center justify-between">
-                        <span className="text-slate-500">Specification:</span>
-                        <span className="font-semibold text-emerald-700">{prod.grade}</span>
-                      </div>
-                      <div className="mt-1 flex items-center justify-between">
-                        <span className="text-slate-500">Indicative Pricing:</span>
-                        <span className="font-bold text-[#287A74]">{prod.priceEstimate}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Card Bottom: Stock Status & Quantity Controls */}
-                  <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-emerald-600">
-                      <span className="h-2 w-2 rounded-full bg-emerald-500" />
-                      <span>Ready for Dispatch</span>
-                    </div>
-
-                    <div className="flex items-center gap-1">
-                      {currentQty > 0 ? (
-                        <div className="flex items-center rounded-lg border border-slate-200 bg-slate-50">
-                          <button
-                            onClick={() => updateQuantity(prod.id, -1)}
-                            className="p-1.5 text-slate-600 hover:text-red-600"
-                            aria-label={`Reduce ${prod.name}`}
-                          >
-                            <Minus size={14} />
-                          </button>
-                          <span className="w-8 text-center text-xs font-extrabold text-slate-900">
-                            {currentQty}
+                        {cat.badge && (
+                          <span className="rounded-md bg-amber-50 border border-amber-200/60 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                            {cat.badge}
                           </span>
-                          <button
-                            onClick={() => updateQuantity(prod.id, 1)}
-                            className="p-1.5 text-slate-600 hover:text-emerald-600"
-                            aria-label={`Add ${prod.name}`}
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Category Title & Description */}
+                    <div className="mt-5">
+                      <h3 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-[#287A74] transition-colors leading-snug">
+                        {cat.title}
+                      </h3>
+                      <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                        {cat.description}
+                      </p>
+                    </div>
+
+                    {/* Operational Perk Banner */}
+                    <div className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 border border-slate-100">
+                      <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
+                      <span className="truncate">{cat.perk}</span>
+                    </div>
+
+                    {/* Popular Commercial Stock Chips */}
+                    <div className="mt-4 pt-3 border-t border-slate-100">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                        Institutional Staples:
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {cat.popularItems.map((item) => (
+                          <span
+                            key={item}
+                            className="rounded-lg bg-slate-100/90 px-2.5 py-1 text-[11px] font-medium text-slate-600 transition-colors group-hover:bg-slate-100 group-hover:text-slate-900"
                           >
-                            <Plus size={14} />
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => updateQuantity(prod.id, 1)}
-                          className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-[#287A74] transition hover:bg-[#287A74] hover:text-white"
-                        >
-                          <Plus size={14} />
-                          <span>Add to Quote</span>
-                        </button>
-                      )}
+                            {item}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </article>
+
+                  {/* Interactive Explore Click Indicator Footer */}
+                  <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="relative flex h-2.5 w-2.5">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#287A74] opacity-75" />
+                        <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#287A74]" />
+                      </span>
+                      <span className="text-xs font-bold text-slate-600 group-hover:text-[#287A74] transition-colors">
+                        Explore by clicking here
+                      </span>
+                    </div>
+
+                    <div className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 group-hover:bg-[#287A74] px-3.5 py-2 text-xs font-extrabold text-slate-700 group-hover:text-white transition-all duration-300 shadow-sm">
+                      <span>View Products</span>
+                      <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1.5" />
+                    </div>
+                  </div>
+                </Link>
               );
             })}
           </div>
 
-          {filteredProducts.length === 0 && (
-            <div className="my-12 rounded-2xl border border-dashed border-slate-300 p-12 text-center">
-              <Search size={32} className="mx-auto text-slate-400" />
-              <h3 className="mt-3 font-display text-lg font-bold text-slate-800">No matching products found</h3>
-              <p className="mt-1 text-sm text-slate-500">
-                Try searching for another item or clear your active category filters.
-              </p>
-              <button
-                onClick={() => {
-                  setActiveCategory("all");
-                  setActiveSector("all");
-                  setSearchQuery("");
-                }}
-                className="mt-4 rounded-xl bg-[#287A74] px-4 py-2 text-xs font-bold text-white"
-              >
-                Reset All Filters
-              </button>
+          {/* Commercial Bridge Banner: Prompting Full Wholesale Catalog */}
+          <div className="mt-14 overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-[#071a19] via-[#0d2a28] to-[#133c39] p-8 sm:p-12 text-white shadow-xl relative">
+            <div className="absolute right-0 top-0 -mt-10 -mr-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="max-w-2xl space-y-3 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-400/20 px-3.5 py-1 text-xs font-bold text-amber-300">
+                  <FileSpreadsheet size={14} />
+                  <span>Interactive Wholesale Catalog & RFQ Builder</span>
+                </div>
+                <h3 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
+                  Looking for Complete Pricing & Instant Commercial Quotations?
+                </h3>
+                <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
+                  Browse our full inventory of fresh eggs (mayai), fresh vegetables, chilled fruits, soft drinks, bulk grains, and commercial cooking oils. Adjust pack quantities, download customized PDF/Excel RFQs, or send directly to WhatsApp.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
+                <Link
+                  href="/catalog"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-amber-400 px-6 py-3.5 text-xs sm:text-sm font-extrabold text-slate-950 shadow-lg shadow-amber-400/20 transition hover:bg-amber-300 hover:scale-105 active:scale-95"
+                >
+                  <ShoppingBag size={16} />
+                  <span>Open Full Wholesale Catalog</span>
+                  <ArrowRight size={16} />
+                </Link>
+                <a
+                  href="#quote-section"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
+                >
+                  <MessageSquare size={16} />
+                  <span>Request Custom Supply Plan</span>
+                </a>
+              </div>
             </div>
-          )}
+          </div>
         </div>
       </section>
 
@@ -1625,11 +973,10 @@ export default function Landing() {
                 <button
                   key={sec.id}
                   onClick={() => setSelectedSectorTab(idx)}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-bold transition ${
-                    selectedSectorTab === idx
+                  className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-bold transition ${selectedSectorTab === idx
                       ? "bg-[#287A74] text-white shadow-md"
                       : "text-slate-600 hover:text-slate-900"
-                  }`}
+                    }`}
                 >
                   <sec.icon size={18} />
                   <span>{sec.title}</span>
@@ -2072,10 +1419,10 @@ export default function Landing() {
                   <div>
                     <span className="block text-xs text-slate-400">Official RFQ Inquiries</span>
                     <a
-                      href="mailto:quotes@mhgeneralsuppliers.com"
+                      href="mailto:quotes@mhsuppliers.co.tz"
                       className="font-bold text-white hover:text-amber-300"
                     >
-                      quotes@mhgeneralsuppliers.com
+                      quotes@mhsuppliers.co.tz
                     </a>
                   </div>
                 </div>
@@ -2322,9 +1669,8 @@ export default function Landing() {
                     <span>{faq.q}</span>
                     <ChevronDown
                       size={18}
-                      className={`text-slate-400 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-[#287A74]" : ""
-                      }`}
+                      className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180 text-[#287A74]" : ""
+                        }`}
                     />
                   </button>
                   {isOpen && (
@@ -2407,34 +1753,40 @@ export default function Landing() {
               </h4>
               <ul className="mt-4 space-y-2 text-xs text-slate-400">
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=eggs" className="hover:text-amber-400 transition flex items-center justify-between">
+                    <span>Fresh Farm Eggs (Mayai)</span>
+                    <span className="text-[10px] text-amber-400 font-bold">Top Seller</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/catalog?category=vegetables" className="hover:text-amber-400 transition">
                     Fresh Farm Vegetables
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=fruits" className="hover:text-amber-400 transition">
                     Orchard & Tropical Fruits
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=beverages" className="hover:text-amber-400 transition">
                     Soft Drinks & Mineral Water
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=groceries" className="hover:text-amber-400 transition">
                     Wholesale Rice, Flour & Grains
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=cooking_oil" className="hover:text-amber-400 transition">
                     Commercial Cooking Oils & Fats
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="#catalog" className="hover:text-amber-400 transition">
+                  <Link href="/catalog?category=snacks" className="hover:text-amber-400 transition">
                     Office Snacks & Breakroom Kits
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -2485,7 +1837,7 @@ export default function Landing() {
                 </li>
                 <li className="flex items-center gap-2">
                   <Mail size={14} className="text-amber-400" />
-                  <span>orders@mhgeneralsuppliers.com</span>
+                  <span>orders@mhsuppliers.co.tz</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <MapPin size={14} className="text-amber-400" />
@@ -2551,12 +1903,14 @@ export default function Landing() {
                   <p className="mt-1 text-xs text-slate-500">
                     Add commodities from the wholesale catalog to generate an instant quotation.
                   </p>
-                  <button
+                  <Link
+                    href="/catalog"
                     onClick={() => setIsCartOpen(false)}
-                    className="mt-6 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white"
+                    className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[#328e87] transition"
                   >
-                    Explore Products
-                  </button>
+                    <span>Explore Wholesale Catalog</span>
+                    <ArrowRight size={14} />
+                  </Link>
                 </div>
               ) : (
                 <div data-lenis-prevent className="mt-4 space-y-3 max-h-[60vh] overflow-y-auto pr-1">
@@ -2660,9 +2014,8 @@ export default function Landing() {
           18. FLOATING BACK TO TOP WITH SCROLL PROGRESS RING
       ---------------------------------------------------- */}
       <div
-        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${
-          showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
-        }`}
+        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
+          }`}
       >
         <button
           onClick={() => scrollTo(0)}
