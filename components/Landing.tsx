@@ -34,12 +34,13 @@ import {
   Send,
   RefreshCw,
   Flame,
-  Award,
-  Zap,
   Calendar,
   X,
   FileSpreadsheet,
+  ChevronUp,
+  type LucideIcon,
 } from "lucide-react";
+import { useLenis } from "@/components/SmoothScroll";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -62,7 +63,7 @@ type Product = {
   inStock: boolean;
   sectors: SectorId[];
   description: string;
-  icon: any;
+  icon: LucideIcon;
   badge?: string;
 };
 
@@ -521,6 +522,17 @@ const SMART_PRESETS = [
 // ----------------------------------------------------
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
+  const { scrollTo, stop, start } = useLenis();
+
+  // Scroll Animation Refs
+  const progressBarRef = useRef<HTMLDivElement>(null);
+  const processTrackRef = useRef<HTMLDivElement>(null);
+  const processVanRef = useRef<HTMLDivElement>(null);
+
+  // Scroll interactive states
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
+  const [scrollPercentage, setScrollPercentage] = useState(0);
 
   // Filter state
   const [activeCategory, setActiveCategory] = useState<CategoryId>("all");
@@ -562,13 +574,50 @@ export default function Landing() {
     return () => clearInterval(timer);
   }, []);
 
-  // GSAP Animations
+  // Sync drawer with Lenis smooth scroll
+  useEffect(() => {
+    if (isCartOpen) {
+      stop();
+    } else {
+      start();
+    }
+  }, [isCartOpen, stop, start]);
+
+  // Refresh ScrollTrigger calculations on dynamic filter / tab changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      ScrollTrigger.refresh();
+    }, 120);
+    return () => clearTimeout(timer);
+  }, [activeCategory, activeSector, searchQuery, selectedSectorTab]);
+
+  // GSAP Animations with ScrollTrigger & MatchMedia
   useEffect(() => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
 
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Hero reveal
+        // 1. Top Reading Scroll Progress Bar
+        if (progressBarRef.current) {
+          gsap.to(progressBarRef.current, {
+            scaleX: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: root.current,
+              start: "top top",
+              end: "bottom bottom",
+              scrub: 0.15,
+              onUpdate: (self) => {
+                const progress = self.progress;
+                setScrollPercentage(Math.round(progress * 100));
+                setShowBackToTop(self.scroll() > 380);
+                setIsScrolled(self.scroll() > 40);
+              },
+            },
+          });
+        }
+
+        // 2. Hero initial entrance reveal
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
         tl.from(".hero-badge", { y: -20, opacity: 0, duration: 0.6 })
           .from(".hero-heading span", { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.3")
@@ -578,7 +627,64 @@ export default function Landing() {
           .from(".hero-image-card", { scale: 0.95, opacity: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.7")
           .from(".floating-pill", { scale: 0.7, opacity: 0, stagger: 0.15, duration: 0.6 }, "-=0.4");
 
-        // Counters on scroll
+        // 3. Hero Parallax Layers (Scrubbed with smooth scroll)
+        gsap.to(".hero-ambient-orb-1", {
+          yPercent: 35,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        });
+
+        gsap.to(".hero-ambient-orb-2", {
+          yPercent: -25,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.5,
+          },
+        });
+
+        gsap.to(".floating-pill-top", {
+          yPercent: -45,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+
+        gsap.to(".floating-pill-bottom", {
+          yPercent: -25,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1.2,
+          },
+        });
+
+        gsap.to(".hero-image-inner", {
+          yPercent: 10,
+          scale: 1.05,
+          ease: "none",
+          scrollTrigger: {
+            trigger: ".hero-section",
+            start: "top top",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+
+        // 4. Counters on scroll
         gsap.utils.toArray<HTMLElement>("[data-counter]").forEach((el) => {
           const target = Number(el.dataset.counter);
           const suffix = el.dataset.suffix || "";
@@ -598,10 +704,10 @@ export default function Landing() {
           });
         });
 
-        // Section header reveals
+        // 5. Section reveals (slide up + soft fade)
         gsap.utils.toArray<HTMLElement>(".section-reveal").forEach((section) => {
           gsap.from(section, {
-            y: 40,
+            y: 35,
             opacity: 0,
             duration: 0.8,
             ease: "power2.out",
@@ -613,7 +719,44 @@ export default function Landing() {
           });
         });
 
-        // Staggered steps
+        // 6. Categories grid 3D stagger
+        gsap.from(".category-card", {
+          y: 35,
+          opacity: 0,
+          scale: 0.94,
+          stagger: 0.08,
+          duration: 0.7,
+          ease: "back.out(1.2)",
+          scrollTrigger: {
+            trigger: ".categories-container",
+            start: "top 85%",
+            once: true,
+          },
+        });
+
+        // 7. Interactive Delivery Route Animation in "How It Works"
+        if (processTrackRef.current && processVanRef.current) {
+          const routeTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: "#how-it-works",
+              start: "top 75%",
+              end: "bottom 65%",
+              scrub: 0.4,
+            },
+          });
+
+          routeTl.to(processTrackRef.current, {
+            scaleX: 1,
+            ease: "none",
+          }, 0);
+
+          routeTl.to(processVanRef.current, {
+            left: "100%",
+            ease: "none",
+          }, 0);
+        }
+
+        // Staggered step cards
         gsap.from(".process-card", {
           y: 40,
           opacity: 0,
@@ -625,6 +768,96 @@ export default function Landing() {
             start: "top 75%",
             once: true,
           },
+        });
+
+        // 8. Smart Estimator Parallax Image
+        gsap.to(".fleet-image-inner", {
+          yPercent: 12,
+          scale: 1.08,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#smart-assistant",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+
+        // 9. Logistics Warehouse Parallax Image
+        gsap.to(".groceries-image-inner", {
+          yPercent: 10,
+          scale: 1.08,
+          ease: "none",
+          scrollTrigger: {
+            trigger: "#logistics",
+            start: "top bottom",
+            end: "bottom top",
+            scrub: true,
+          },
+        });
+
+        // 10. Logistics Assurance Cards Stagger
+        gsap.from(".assurance-card", {
+          y: 30,
+          opacity: 0,
+          stagger: 0.1,
+          duration: 0.6,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".assurance-grid",
+            start: "top 80%",
+            once: true,
+          },
+        });
+
+        // 11. Client Testimonials Stagger
+        gsap.from(".testimonial-card", {
+          y: 40,
+          opacity: 0,
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".testimonials-grid",
+            start: "top 80%",
+            once: true,
+          },
+        });
+
+        // 12. RFQ Quote Section Ambient Spotlight Scale
+        gsap.from(".quote-ambient-glow", {
+          scale: 0.6,
+          opacity: 0.1,
+          duration: 1.4,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#quote-section",
+            start: "top 80%",
+            once: true,
+          },
+        });
+
+        // 13. Catalog cards initial entrance
+        gsap.from(".catalog-card", {
+          y: 30,
+          opacity: 0,
+          stagger: 0.05,
+          duration: 0.5,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#catalog-grid",
+            start: "top 85%",
+            once: true,
+          },
+        });
+      });
+
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        // Immediate appearance for users preferring reduced motion
+        gsap.set(".section-reveal, .process-card, .category-card, .assurance-card, .testimonial-card, .catalog-card", {
+          opacity: 1,
+          y: 0,
+          scale: 1,
         });
       });
     }, root);
@@ -716,6 +949,17 @@ export default function Landing() {
   return (
     <div ref={root} className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-amber-400">
       {/* ----------------------------------------------------
+          0. LUMINOUS SCROLL PROGRESS BAR (GSAP + Lenis)
+      ---------------------------------------------------- */}
+      <div className="fixed top-0 left-0 right-0 z-50 h-[3px] pointer-events-none bg-slate-900/10">
+        <div
+          ref={progressBarRef}
+          className="h-full w-full origin-left bg-gradient-to-r from-amber-400 via-emerald-400 to-[#1e5cb3] shadow-[0_0_12px_rgba(245,158,11,0.6)]"
+          style={{ transform: "scaleX(0)" }}
+        />
+      </div>
+
+      {/* ----------------------------------------------------
           1. TOP DISPATCH & HOTLINE NOTIFICATION BAR
       ---------------------------------------------------- */}
       <div className="border-b border-blue-950/40 bg-[#071c36] text-xs font-medium text-slate-300">
@@ -750,8 +994,18 @@ export default function Landing() {
       {/* ----------------------------------------------------
           2. ENTERPRISE HEADER
       ---------------------------------------------------- */}
-      <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 backdrop-blur-md">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <header
+        className={`sticky top-0 z-40 border-b transition-all duration-300 ${
+          isScrolled
+            ? "border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-md"
+            : "border-slate-200/60 bg-white/90 backdrop-blur-sm"
+        }`}
+      >
+        <div
+          className={`mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 transition-all duration-300 ${
+            isScrolled ? "h-16" : "h-20"
+          }`}
+        >
           {/* Logo */}
           <a href="#top" className="flex items-center gap-3 group">
             <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-blue-900 shadow-sm transition group-hover:scale-105">
@@ -827,10 +1081,10 @@ export default function Landing() {
       {/* ----------------------------------------------------
           3. HERO SECTION (Mercora inspired + Wholesale Produce)
       ---------------------------------------------------- */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-[#0a2547] via-[#0f3b70] to-[#12427a] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
+      <section className="hero-section relative overflow-hidden bg-gradient-to-b from-[#0a2547] via-[#0f3b70] to-[#12427a] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
         {/* Soft Background Accents */}
-        <div className="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-500/15 blur-3xl" />
-        <div className="pointer-events-none absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl" />
+        <div className="hero-ambient-orb-1 pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-500/15 blur-3xl will-change-transform" />
+        <div className="hero-ambient-orb-2 pointer-events-none absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl will-change-transform" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
@@ -910,7 +1164,7 @@ export default function Landing() {
                   src="/images/produce.jpg"
                   alt="MH General Suppliers Farm Produce and Wholesale Warehouse"
                   fill
-                  className="object-cover transition duration-700 hover:scale-105"
+                  className="hero-image-inner object-cover transition duration-700 hover:scale-105 will-change-transform"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
@@ -931,7 +1185,7 @@ export default function Landing() {
               </div>
 
               {/* Floating Pill 1: 1800+ SKUs */}
-              <div className="floating-pill animate-float-slow absolute -top-5 -right-3 sm:-right-6 rounded-2xl border border-white/30 bg-white/95 p-3.5 text-slate-900 shadow-xl backdrop-blur-md">
+              <div className="floating-pill floating-pill-top animate-float-slow absolute -top-5 -right-3 sm:-right-6 rounded-2xl border border-white/30 bg-white/95 p-3.5 text-slate-900 shadow-xl backdrop-blur-md will-change-transform">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-800">
                     <Sparkles size={20} />
@@ -944,7 +1198,7 @@ export default function Landing() {
               </div>
 
               {/* Floating Pill 2: Live Dispatch Ticket */}
-              <div className="floating-pill animate-float-reverse absolute -bottom-6 -left-3 sm:-left-6 max-w-xs rounded-2xl border border-white/30 bg-white/95 p-4 text-slate-900 shadow-2xl backdrop-blur-md">
+              <div className="floating-pill floating-pill-bottom animate-float-reverse absolute -bottom-6 -left-3 sm:-left-6 max-w-xs rounded-2xl border border-white/30 bg-white/95 p-4 text-slate-900 shadow-2xl backdrop-blur-md will-change-transform">
                 <div className="flex items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-1.5 font-bold text-emerald-700">
                     <span className="h-2 w-2 rounded-full bg-emerald-500 animate-ping" />
@@ -1042,7 +1296,7 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="categories-container mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {[
               {
                 id: "vegetables" as CategoryId,
@@ -1091,10 +1345,9 @@ export default function Landing() {
                 key={cat.id}
                 onClick={() => {
                   setActiveCategory(cat.id);
-                  const el = document.getElementById("catalog");
-                  if (el) el.scrollIntoView({ behavior: "smooth" });
+                  scrollTo("#catalog");
                 }}
-                className={`group flex flex-col items-center justify-between rounded-2xl border p-5 text-center transition hover:-translate-y-1 hover:shadow-lg ${
+                className={`category-card group flex flex-col items-center justify-between rounded-2xl border p-5 text-center transition duration-300 hover:-translate-y-2 hover:shadow-xl will-change-transform ${
                   activeCategory === cat.id ? "ring-2 ring-[#0f3b70] shadow-md" : ""
                 } ${cat.color}`}
               >
@@ -1199,13 +1452,13 @@ export default function Landing() {
           </div>
 
           {/* Product Grid */}
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div id="catalog-grid" className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {filteredProducts.map((prod) => {
               const currentQty = cart[prod.id] || 0;
               return (
                 <article
                   key={prod.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 transition duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl"
+                  className="catalog-card group relative flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-5 transition duration-200 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl will-change-transform"
                 >
                   <div>
                     {/* Card Top: Badges & Category */}
@@ -1449,54 +1702,80 @@ export default function Landing() {
             </p>
           </div>
 
-          <div className="mt-16 grid gap-8 md:grid-cols-3">
-            {[
-              {
-                step: "01.",
-                title: "Send Your List or Select Items",
-                desc: "Choose from our live catalog, upload your Excel purchasing requisition, or send your requirements via WhatsApp.",
-                icon: FileSpreadsheet,
-                badge: "Any Format Accepted",
-              },
-              {
-                step: "02.",
-                title: "Receive Transparent Itemized Quote",
-                desc: "Within 15 minutes, receive verified pricing, confirmed stock status, batch delivery date, and volume tiered discounts.",
-                icon: Clock,
-                badge: "Avg. 15 Min Turnaround",
-              },
-              {
-                step: "03.",
-                title: "Dawn Temperature-Controlled Delivery",
-                desc: "Our refrigerated fleet delivers right to your hotel kitchen, office pantry, or site loading dock with signed electronic POD.",
-                icon: Truck,
-                badge: "05:30 AM Guaranteed",
-              },
-            ].map((st) => (
+          {/* Interactive Delivery Road Track */}
+          <div className="relative mt-16">
+            {/* Desktop Animated Route Line & Traveling Cold-Chain Delivery Van */}
+            <div className="hidden md:block absolute top-[52px] left-[15%] right-[15%] z-0 pointer-events-none">
+              {/* Route Roadway Track */}
+              <div className="h-2 w-full rounded-full bg-slate-200/90 overflow-hidden relative shadow-inner">
+                {/* Active Progress Fill that draws on scroll */}
+                <div
+                  ref={processTrackRef}
+                  className="h-full w-full origin-left bg-gradient-to-r from-[#0f3b70] via-amber-400 to-emerald-500 rounded-full"
+                  style={{ transform: "scaleX(0)" }}
+                />
+              </div>
+
+              {/* Real-time Animated Van Indicator riding along the route track */}
               <div
-                key={st.step}
-                className="process-card group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50 p-8 transition duration-300 hover:-translate-y-2 hover:border-[#0f3b70] hover:bg-white hover:shadow-xl"
+                ref={processVanRef}
+                className="absolute -top-3.5 left-0 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-[#0f3b70] px-3 py-1 text-[11px] font-bold text-white shadow-xl shadow-blue-900/40 border border-white/60 will-change-transform z-10"
+                style={{ left: "0%" }}
               >
-                <div>
-                  <div className="flex items-center justify-between">
-                    <span className="font-display text-4xl font-extrabold text-[#0f3b70] transition group-hover:scale-105">
-                      {st.step}
-                    </span>
-                    <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold text-emerald-800">
-                      {st.badge}
-                    </span>
+                <Truck size={14} className="text-amber-400" />
+                <span className="hidden lg:inline text-[9px] uppercase tracking-wider font-extrabold text-white">Cold Transit</span>
+              </div>
+            </div>
+
+            <div className="grid gap-8 md:grid-cols-3 relative z-10">
+              {[
+                {
+                  step: "01.",
+                  title: "Send Your List or Select Items",
+                  desc: "Choose from our live catalog, upload your Excel purchasing requisition, or send your requirements via WhatsApp.",
+                  icon: FileSpreadsheet,
+                  badge: "Any Format Accepted",
+                },
+                {
+                  step: "02.",
+                  title: "Receive Transparent Itemized Quote",
+                  desc: "Within 15 minutes, receive verified pricing, confirmed stock status, batch delivery date, and volume tiered discounts.",
+                  icon: Clock,
+                  badge: "Avg. 15 Min Turnaround",
+                },
+                {
+                  step: "03.",
+                  title: "Dawn Temperature-Controlled Delivery",
+                  desc: "Our refrigerated fleet delivers right to your hotel kitchen, office pantry, or site loading dock with signed electronic POD.",
+                  icon: Truck,
+                  badge: "05:30 AM Guaranteed",
+                },
+              ].map((st) => (
+                <div
+                  key={st.step}
+                  className="process-card group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/90 backdrop-blur-sm p-8 transition duration-300 hover:-translate-y-2 hover:border-[#0f3b70] hover:bg-white hover:shadow-xl will-change-transform"
+                >
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-display text-4xl font-extrabold text-[#0f3b70] transition group-hover:scale-105">
+                        {st.step}
+                      </span>
+                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold text-emerald-800">
+                        {st.badge}
+                      </span>
+                    </div>
+
+                    <h3 className="mt-6 font-display text-xl font-bold text-slate-900">{st.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{st.desc}</p>
                   </div>
 
-                  <h3 className="mt-6 font-display text-xl font-bold text-slate-900">{st.title}</h3>
-                  <p className="mt-2 text-sm leading-relaxed text-slate-600">{st.desc}</p>
+                  <div className="mt-8 pt-4 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0f3b70]">
+                    <st.icon size={16} />
+                    <span>Step {st.step.replace(".", "")} Verified by MH Dispatch</span>
+                  </div>
                 </div>
-
-                <div className="mt-8 pt-4 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0f3b70]">
-                  <st.icon size={16} />
-                  <span>Step {st.step.replace(".", "")} Verified by MH Dispatch</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -1551,7 +1830,7 @@ export default function Landing() {
                   src="/images/fleet.jpg"
                   alt="MH General Suppliers Refrigerated Cold-Chain Fleet"
                   fill
-                  className="object-cover"
+                  className="fleet-image-inner object-cover will-change-transform scale-105"
                 />
               </div>
 
@@ -1587,7 +1866,7 @@ export default function Landing() {
                 src="/images/groceries.jpg"
                 alt="Bulk Oils, Rice, and Groceries Warehouse"
                 fill
-                className="object-cover"
+                className="groceries-image-inner object-cover will-change-transform scale-105"
               />
             </div>
 
@@ -1606,8 +1885,8 @@ export default function Landing() {
                 waiting, late deliveries or rotten produce can disrupt your entire business.
               </p>
 
-              <div className="grid gap-4 sm:grid-cols-2 pt-2">
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="assurance-grid grid gap-4 sm:grid-cols-2 pt-2">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
                   <Flame size={20} className="text-amber-500" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Direct Farm Sourcing
@@ -1618,7 +1897,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
                   <RefreshCw size={20} className="text-emerald-600" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Instant Replacement Policy
@@ -1629,7 +1908,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
                   <Calendar size={20} className="text-blue-600" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Automated Standing Orders
@@ -1640,7 +1919,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
                   <FileSpreadsheet size={20} className="text-purple-600" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Clear Digital Invoicing
@@ -1670,7 +1949,7 @@ export default function Landing() {
             </h2>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <div className="testimonials-grid mt-12 grid gap-6 md:grid-cols-3">
             {[
               {
                 quote:
@@ -1696,7 +1975,7 @@ export default function Landing() {
             ].map((t) => (
               <div
                 key={t.author}
-                className="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition hover:shadow-md"
+                className="testimonial-card flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:shadow-xl hover:-translate-y-1.5 will-change-transform"
               >
                 <p className="text-sm leading-relaxed text-slate-700 italic">“{t.quote}”</p>
                 <div className="mt-6 pt-4 border-t border-slate-100">
@@ -1713,8 +1992,12 @@ export default function Landing() {
       {/* ----------------------------------------------------
           12. INTERACTIVE RFQ / QUOTE BUILDER SECTION
       ---------------------------------------------------- */}
-      <section id="quote-section" className="section-reveal py-20 bg-[#0a2547] text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section id="quote-section" className="section-reveal py-20 bg-[#0a2547] text-white relative overflow-hidden">
+        {/* Ambient Glow Spotlight */}
+        <div className="quote-ambient-glow pointer-events-none absolute -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-blue-500/10 blur-[120px] will-change-transform" />
+        <div className="quote-ambient-glow pointer-events-none absolute -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[120px] will-change-transform" />
+
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
           <div className="grid gap-12 lg:grid-cols-2 items-center">
             {/* Left Column: Value Proposition & Direct Contact */}
             <div className="space-y-6">
@@ -2239,7 +2522,7 @@ export default function Landing() {
                   </button>
                 </div>
               ) : (
-                <div className="mt-4 space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+                <div data-lenis-prevent className="mt-4 space-y-3 max-h-[60vh] overflow-y-auto pr-1">
                   {Object.entries(cart).map(([pId, qty]) => {
                     const prod = PRODUCTS.find((p) => p.id === pId);
                     if (!prod) return null;
@@ -2335,6 +2618,48 @@ export default function Landing() {
           </div>
         </div>
       )}
+
+      {/* ----------------------------------------------------
+          18. FLOATING BACK TO TOP WITH SCROLL PROGRESS RING
+      ---------------------------------------------------- */}
+      <div
+        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${
+          showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
+      >
+        <button
+          onClick={() => scrollTo(0)}
+          className="group relative flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-[#0f3b70] hover:text-[#0f3b70] hover:shadow-2xl"
+          aria-label="Scroll to top"
+        >
+          <svg className="absolute inset-0 -rotate-90" width="48" height="48">
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              stroke="#e2e8f0"
+              strokeWidth="2.5"
+              fill="transparent"
+            />
+            <circle
+              cx="24"
+              cy="24"
+              r="20"
+              stroke="#0f3b70"
+              strokeWidth="2.5"
+              fill="transparent"
+              strokeDasharray={125.6}
+              strokeDashoffset={125.6 - (125.6 * scrollPercentage) / 100}
+              strokeLinecap="round"
+              className="transition-all duration-75 ease-out"
+            />
+          </svg>
+          <ChevronUp size={20} className="transition-transform group-hover:-translate-y-0.5" />
+          <span className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 rounded bg-slate-900 px-2 py-0.5 text-[10px] font-bold text-white opacity-0 shadow transition-opacity group-hover:opacity-100 whitespace-nowrap">
+            {scrollPercentage}% Top
+          </span>
+        </button>
+      </div>
     </div>
   );
 }

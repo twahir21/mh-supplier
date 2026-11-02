@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Manrope } from "next/font/google";
 import "./globals.css";
+import SmoothScroll from "@/components/SmoothScroll";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -48,7 +49,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${bricolage.variable} ${manrope.variable}`}>
-      <body className="antialiased selection:bg-amber-400 selection:text-slate-900">{children}</body>
+      <body className="antialiased selection:bg-amber-400 selection:text-slate-900">
+        <SmoothScroll>{children}</SmoothScroll>
+      </body>
     </html>
   );
 }
