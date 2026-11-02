@@ -942,7 +942,7 @@ export default function Landing() {
       particleCount: 80,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ["#0f3b70", "#f59e0b", "#059669", "#ffffff"],
+      colors: ["#287A74", "#f59e0b", "#059669", "#ffffff"],
     });
   };
 
@@ -954,7 +954,7 @@ export default function Landing() {
       <div className="fixed top-0 left-0 right-0 z-50 h-[3px] pointer-events-none bg-slate-900/10">
         <div
           ref={progressBarRef}
-          className="h-full w-full origin-left bg-gradient-to-r from-amber-400 via-emerald-400 to-[#1e5cb3] shadow-[0_0_12px_rgba(245,158,11,0.6)]"
+          className="h-full w-full origin-left bg-gradient-to-r from-amber-400 via-emerald-400 to-[#287A74] shadow-[0_0_12px_rgba(245,158,11,0.6)]"
           style={{ transform: "scaleX(0)" }}
         />
       </div>
@@ -962,7 +962,7 @@ export default function Landing() {
       {/* ----------------------------------------------------
           1. TOP DISPATCH & HOTLINE NOTIFICATION BAR
       ---------------------------------------------------- */}
-      <div className="border-b border-blue-950/40 bg-[#071c36] text-xs font-medium text-slate-300">
+      <div className="border-b border-[#287A74]/25 bg-[#071a19] text-xs font-medium text-slate-300">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
           <div className="flex items-center gap-2">
             <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -1008,7 +1008,7 @@ export default function Landing() {
         >
           {/* Logo */}
           <a href="#top" className="flex items-center gap-3 group">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-blue-900 shadow-sm transition group-hover:scale-105">
+            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-[#287A74] shadow-sm transition group-hover:scale-105">
               <Image
                 src="/logo.jpeg"
                 alt="MH General Suppliers Logo"
@@ -1018,7 +1018,7 @@ export default function Landing() {
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-xl font-extrabold tracking-tight text-[#0f3b70]">
+              <span className="font-display text-xl font-extrabold tracking-tight text-[#287A74]">
                 MH GENERAL SUPPLIERS
               </span>
               <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-500">
@@ -1029,22 +1029,22 @@ export default function Landing() {
 
           {/* Desktop Nav */}
           <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex" aria-label="Main">
-            <a href="#catalog" className="transition hover:text-[#0f3b70]">
+            <a href="#catalog" className="transition hover:text-[#287A74]">
               Wholesale Catalog
             </a>
-            <a href="#sectors" className="transition hover:text-[#0f3b70]">
+            <a href="#sectors" className="transition hover:text-[#287A74]">
               Sectors We Supply
             </a>
-            <a href="#how-it-works" className="transition hover:text-[#0f3b70]">
+            <a href="#how-it-works" className="transition hover:text-[#287A74]">
               How It Works
             </a>
-            <a href="#smart-assistant" className="transition hover:text-[#0f3b70]">
+            <a href="#smart-assistant" className="transition hover:text-[#287A74]">
               Smart Estimator
             </a>
-            <a href="#logistics" className="transition hover:text-[#0f3b70]">
+            <a href="#logistics" className="transition hover:text-[#287A74]">
               Cold-Chain Fleet
             </a>
-            <a href="#faq" className="transition hover:text-[#0f3b70]">
+            <a href="#faq" className="transition hover:text-[#287A74]">
               FAQ
             </a>
           </nav>
@@ -1054,10 +1054,10 @@ export default function Landing() {
             {/* Cart Trigger */}
             <button
               onClick={() => setIsCartOpen(!isCartOpen)}
-              className="relative flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 transition hover:border-blue-900 hover:bg-blue-50"
+              className="relative flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 transition hover:border-[#287A74] hover:bg-[#287A74]/10"
               aria-label="Open Quote Basket"
             >
-              <ShoppingBag size={18} className="text-[#0f3b70]" />
+              <ShoppingBag size={18} className="text-[#287A74]" />
               <span className="hidden sm:inline">RFQ Basket</span>
               {totalCartCount > 0 && (
                 <span className="grid h-5 w-5 place-items-center rounded-full bg-amber-500 text-[11px] font-extrabold text-slate-900">
@@ -1069,7 +1069,7 @@ export default function Landing() {
             {/* Request a Quote CTA */}
             <a
               href="#quote-section"
-              className="group flex items-center gap-2 rounded-xl bg-[#0f3b70] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-blue-950/20 transition hover:bg-[#1a4f8b] hover:shadow-lg"
+              className="group flex items-center gap-2 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#071a19]/25 transition hover:bg-[#328e87] hover:shadow-lg"
             >
               <span>Request Quote</span>
               <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
@@ -1081,9 +1081,9 @@ export default function Landing() {
       {/* ----------------------------------------------------
           3. HERO SECTION (Mercora inspired + Wholesale Produce)
       ---------------------------------------------------- */}
-      <section className="hero-section relative overflow-hidden bg-gradient-to-b from-[#0a2547] via-[#0f3b70] to-[#12427a] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
+      <section className="hero-section relative overflow-hidden bg-gradient-to-b from-[#0b2524] via-[#287A74] to-[#1a5a55] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
         {/* Soft Background Accents */}
-        <div className="hero-ambient-orb-1 pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-blue-500/15 blur-3xl will-change-transform" />
+        <div className="hero-ambient-orb-1 pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#287A74]/20 blur-3xl will-change-transform" />
         <div className="hero-ambient-orb-2 pointer-events-none absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl will-change-transform" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -1148,7 +1148,7 @@ export default function Landing() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <FileSpreadsheet size={20} className="shrink-0 text-blue-300" />
+                  <FileSpreadsheet size={20} className="shrink-0 text-teal-300" />
                   <div>
                     <span className="block font-bold text-white">Net-30 Invoicing</span>
                     <span className="text-slate-300">Consolidated monthly billing</span>
@@ -1211,7 +1211,7 @@ export default function Landing() {
                 </p>
                 <div className="mt-2 flex items-center justify-between text-[11px] text-slate-500">
                   <span>Refrigerated: +3.8°C</span>
-                  <span className="font-semibold text-[#0f3b70]">ETA: 05:25 AM</span>
+                  <span className="font-semibold text-[#287A74]">ETA: 05:25 AM</span>
                 </div>
               </div>
             </div>
@@ -1228,7 +1228,7 @@ export default function Landing() {
             <span
               data-counter="500"
               data-suffix="+"
-              className="font-display text-3xl font-extrabold text-[#0f3b70] sm:text-4xl"
+              className="font-display text-3xl font-extrabold text-[#287A74] sm:text-4xl"
             >
               500+
             </span>
@@ -1267,7 +1267,7 @@ export default function Landing() {
             <span
               data-counter="15"
               data-suffix="m"
-              className="font-display text-3xl font-extrabold text-[#0f3b70] sm:text-4xl"
+              className="font-display text-3xl font-extrabold text-[#287A74] sm:text-4xl"
             >
               15m
             </span>
@@ -1284,7 +1284,7 @@ export default function Landing() {
       <section className="section-reveal py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
               Wholesale Supply Range
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
@@ -1348,7 +1348,7 @@ export default function Landing() {
                   scrollTo("#catalog");
                 }}
                 className={`category-card group flex flex-col items-center justify-between rounded-2xl border p-5 text-center transition duration-300 hover:-translate-y-2 hover:shadow-xl will-change-transform ${
-                  activeCategory === cat.id ? "ring-2 ring-[#0f3b70] shadow-md" : ""
+                  activeCategory === cat.id ? "ring-2 ring-[#287A74] shadow-md" : ""
                 } ${cat.color}`}
               >
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-white shadow-sm transition group-hover:scale-110">
@@ -1393,7 +1393,7 @@ export default function Landing() {
                 placeholder="Search tomatoes, rice, oil..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm outline-none transition focus:border-[#0f3b70] focus:bg-white"
+                className="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm outline-none transition focus:border-[#287A74] focus:bg-white"
               />
               {searchQuery && (
                 <button
@@ -1424,7 +1424,7 @@ export default function Landing() {
                   onClick={() => setActiveCategory(pill.id as CategoryId)}
                   className={`rounded-full px-4 py-1.5 text-xs font-bold transition ${
                     activeCategory === pill.id
-                      ? "bg-[#0f3b70] text-white shadow-sm"
+                      ? "bg-[#287A74] text-white shadow-sm"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
@@ -1440,7 +1440,7 @@ export default function Landing() {
               <select
                 value={activeSector}
                 onChange={(e) => setActiveSector(e.target.value as SectorId)}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-bold text-[#0f3b70] outline-none focus:border-[#0f3b70]"
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3 py-1.5 font-bold text-[#287A74] outline-none focus:border-[#287A74]"
               >
                 <option value="all">All Sectors</option>
                 <option value="hotels">Hotels & Resorts</option>
@@ -1463,7 +1463,7 @@ export default function Landing() {
                   <div>
                     {/* Card Top: Badges & Category */}
                     <div className="flex items-center justify-between gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-md bg-blue-50 px-2.5 py-1 text-[11px] font-bold text-[#0f3b70]">
+                      <span className="inline-flex items-center gap-1 rounded-md bg-[#287A74]/10 px-2.5 py-1 text-[11px] font-bold text-[#287A74]">
                         <prod.icon size={12} />
                         {prod.categoryName}
                       </span>
@@ -1475,7 +1475,7 @@ export default function Landing() {
                     </div>
 
                     {/* Product Name */}
-                    <h3 className="mt-3 font-display text-lg font-bold text-slate-900 group-hover:text-[#0f3b70] transition">
+                    <h3 className="mt-3 font-display text-lg font-bold text-slate-900 group-hover:text-[#287A74] transition">
                       {prod.name}
                     </h3>
                     <p className="mt-1 text-xs text-slate-500 leading-relaxed">{prod.description}</p>
@@ -1492,7 +1492,7 @@ export default function Landing() {
                       </div>
                       <div className="mt-1 flex items-center justify-between">
                         <span className="text-slate-500">Indicative Pricing:</span>
-                        <span className="font-bold text-[#0f3b70]">{prod.priceEstimate}</span>
+                        <span className="font-bold text-[#287A74]">{prod.priceEstimate}</span>
                       </div>
                     </div>
                   </div>
@@ -1528,7 +1528,7 @@ export default function Landing() {
                       ) : (
                         <button
                           onClick={() => updateQuantity(prod.id, 1)}
-                          className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-[#0f3b70] transition hover:bg-[#0f3b70] hover:text-white"
+                          className="flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-bold text-[#287A74] transition hover:bg-[#287A74] hover:text-white"
                         >
                           <Plus size={14} />
                           <span>Add to Quote</span>
@@ -1554,7 +1554,7 @@ export default function Landing() {
                   setActiveSector("all");
                   setSearchQuery("");
                 }}
-                className="mt-4 rounded-xl bg-[#0f3b70] px-4 py-2 text-xs font-bold text-white"
+                className="mt-4 rounded-xl bg-[#287A74] px-4 py-2 text-xs font-bold text-white"
               >
                 Reset All Filters
               </button>
@@ -1569,7 +1569,7 @@ export default function Landing() {
       <section id="sectors" className="section-reveal py-20 bg-slate-100/70">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
               Targeted Logistics Solutions
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
@@ -1590,7 +1590,7 @@ export default function Landing() {
                   onClick={() => setSelectedSectorTab(idx)}
                   className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-bold transition ${
                     selectedSectorTab === idx
-                      ? "bg-[#0f3b70] text-white shadow-md"
+                      ? "bg-[#287A74] text-white shadow-md"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
                 >
@@ -1605,7 +1605,7 @@ export default function Landing() {
           <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
             <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
               <div className="p-8 sm:p-12 space-y-6">
-                <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3.5 py-1 text-xs font-bold text-[#0f3b70]">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[#287A74]/10 px-3.5 py-1 text-xs font-bold text-[#287A74]">
                   <CheckCircle2 size={14} className="text-emerald-600" />
                   <span>{SECTORS[selectedSectorTab].tagline}</span>
                 </div>
@@ -1636,7 +1636,7 @@ export default function Landing() {
                   <a
                     href="#quote-section"
                     onClick={() => setRfqSector(SECTORS[selectedSectorTab].id)}
-                    className="rounded-xl bg-[#0f3b70] px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-[#1a4f8b] transition"
+                    className="rounded-xl bg-[#287A74] px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-[#328e87] transition"
                   >
                     Set Up Supply for {SECTORS[selectedSectorTab].title}
                   </a>
@@ -1661,7 +1661,7 @@ export default function Landing() {
                       className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 text-xs shadow-sm"
                     >
                       <div className="flex items-center gap-2 font-bold text-slate-800">
-                        <span className="grid h-6 w-6 place-items-center rounded-lg bg-blue-50 text-[#0f3b70]">
+                        <span className="grid h-6 w-6 place-items-center rounded-lg bg-[#287A74]/10 text-[#287A74]">
                           ✓
                         </span>
                         <span>{item}</span>
@@ -1671,7 +1671,7 @@ export default function Landing() {
                   ))}
                 </div>
 
-                <div className="mt-8 rounded-2xl bg-gradient-to-br from-[#0f3b70] to-[#12427a] p-5 text-white">
+                <div className="mt-8 rounded-2xl bg-gradient-to-br from-[#287A74] to-[#1a5a55] p-5 text-white">
                   <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
                     <ShieldCheck size={16} /> Dedicated Account Manager
                   </div>
@@ -1691,7 +1691,7 @@ export default function Landing() {
       <section id="how-it-works" className="section-reveal py-20 bg-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
               Frictionless B2B Process
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
@@ -1711,7 +1711,7 @@ export default function Landing() {
                 {/* Active Progress Fill that draws on scroll */}
                 <div
                   ref={processTrackRef}
-                  className="h-full w-full origin-left bg-gradient-to-r from-[#0f3b70] via-amber-400 to-emerald-500 rounded-full"
+                  className="h-full w-full origin-left bg-gradient-to-r from-[#287A74] via-amber-400 to-emerald-500 rounded-full"
                   style={{ transform: "scaleX(0)" }}
                 />
               </div>
@@ -1719,7 +1719,7 @@ export default function Landing() {
               {/* Real-time Animated Van Indicator riding along the route track */}
               <div
                 ref={processVanRef}
-                className="absolute -top-3.5 left-0 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-[#0f3b70] px-3 py-1 text-[11px] font-bold text-white shadow-xl shadow-blue-900/40 border border-white/60 will-change-transform z-10"
+                className="absolute -top-3.5 left-0 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-[#287A74] px-3 py-1 text-[11px] font-bold text-white shadow-xl shadow-[#071a19]/35 border border-white/60 will-change-transform z-10"
                 style={{ left: "0%" }}
               >
                 <Truck size={14} className="text-amber-400" />
@@ -1753,11 +1753,11 @@ export default function Landing() {
               ].map((st) => (
                 <div
                   key={st.step}
-                  className="process-card group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/90 backdrop-blur-sm p-8 transition duration-300 hover:-translate-y-2 hover:border-[#0f3b70] hover:bg-white hover:shadow-xl will-change-transform"
+                  className="process-card group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/90 backdrop-blur-sm p-8 transition duration-300 hover:-translate-y-2 hover:border-[#287A74] hover:bg-white hover:shadow-xl will-change-transform"
                 >
                   <div>
                     <div className="flex items-center justify-between">
-                      <span className="font-display text-4xl font-extrabold text-[#0f3b70] transition group-hover:scale-105">
+                      <span className="font-display text-4xl font-extrabold text-[#287A74] transition group-hover:scale-105">
                         {st.step}
                       </span>
                       <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold text-emerald-800">
@@ -1769,7 +1769,7 @@ export default function Landing() {
                     <p className="mt-2 text-sm leading-relaxed text-slate-600">{st.desc}</p>
                   </div>
 
-                  <div className="mt-8 pt-4 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#0f3b70]">
+                  <div className="mt-8 pt-4 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#287A74]">
                     <st.icon size={16} />
                     <span>Step {st.step.replace(".", "")} Verified by MH Dispatch</span>
                   </div>
@@ -1871,7 +1871,7 @@ export default function Landing() {
             </div>
 
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+              <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#287A74]">
                 <ShieldCheck size={16} className="text-emerald-600" />
                 <span>Zero Compromise Procurement</span>
               </div>
@@ -1886,7 +1886,7 @@ export default function Landing() {
               </p>
 
               <div className="assurance-grid grid gap-4 sm:grid-cols-2 pt-2">
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
                   <Flame size={20} className="text-amber-500" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Direct Farm Sourcing
@@ -1897,7 +1897,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
                   <RefreshCw size={20} className="text-emerald-600" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Instant Replacement Policy
@@ -1908,8 +1908,8 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
-                  <Calendar size={20} className="text-blue-600" />
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
+                  <Calendar size={20} className="text-[#287A74]" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Automated Standing Orders
                   </h4>
@@ -1919,7 +1919,7 @@ export default function Landing() {
                   </p>
                 </div>
 
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#0f3b70] hover:shadow-md will-change-transform">
+                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
                   <FileSpreadsheet size={20} className="text-purple-600" />
                   <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
                     Clear Digital Invoicing
@@ -1941,7 +1941,7 @@ export default function Landing() {
       <section className="section-reveal py-20 bg-slate-50 border-t border-slate-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
               Operational Proof
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
@@ -1980,7 +1980,7 @@ export default function Landing() {
                 <p className="text-sm leading-relaxed text-slate-700 italic">“{t.quote}”</p>
                 <div className="mt-6 pt-4 border-t border-slate-100">
                   <span className="font-display text-base font-bold text-slate-900 block">{t.author}</span>
-                  <span className="text-xs font-semibold text-[#0f3b70] block">{t.role}</span>
+                  <span className="text-xs font-semibold text-[#287A74] block">{t.role}</span>
                   <span className="text-xs text-slate-400 block">{t.sector}</span>
                 </div>
               </div>
@@ -1992,9 +1992,9 @@ export default function Landing() {
       {/* ----------------------------------------------------
           12. INTERACTIVE RFQ / QUOTE BUILDER SECTION
       ---------------------------------------------------- */}
-      <section id="quote-section" className="section-reveal py-20 bg-[#0a2547] text-white relative overflow-hidden">
+      <section id="quote-section" className="section-reveal py-20 bg-[#0b2524] text-white relative overflow-hidden">
         {/* Ambient Glow Spotlight */}
-        <div className="quote-ambient-glow pointer-events-none absolute -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-blue-500/10 blur-[120px] will-change-transform" />
+        <div className="quote-ambient-glow pointer-events-none absolute -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-[#287A74]/15 blur-[120px] will-change-transform" />
         <div className="quote-ambient-glow pointer-events-none absolute -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[120px] will-change-transform" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
@@ -2065,7 +2065,7 @@ export default function Landing() {
                   <h3 className="font-display text-2xl font-extrabold text-slate-900">
                     Quotation Request Received!
                   </h3>
-                  <p className="text-xs font-mono font-bold text-[#0f3b70] bg-blue-50 py-1.5 px-3 rounded-lg inline-block">
+                  <p className="text-xs font-mono font-bold text-[#287A74] bg-[#287A74]/10 py-1.5 px-3 rounded-lg inline-block">
                     Reference ID: {rfqReference}
                   </p>
                   <p className="text-sm text-slate-600 max-w-md mx-auto">
@@ -2079,7 +2079,7 @@ export default function Landing() {
                       setIsSubmitted(false);
                       setCart({});
                     }}
-                    className="mt-6 rounded-xl bg-[#0f3b70] px-6 py-2.5 text-xs font-bold text-white hover:bg-[#1a4f8b] transition"
+                    className="mt-6 rounded-xl bg-[#287A74] px-6 py-2.5 text-xs font-bold text-white hover:bg-[#328e87] transition"
                   >
                     Submit Another Inquiry
                   </button>
@@ -2103,7 +2103,7 @@ export default function Landing() {
                         placeholder="e.g. Michael Temba"
                         value={rfqName}
                         onChange={(e) => setRfqName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#0f3b70] focus:bg-white"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
                       />
                     </div>
 
@@ -2118,7 +2118,7 @@ export default function Landing() {
                         placeholder="e.g. Serena Hotel or Alpha Site"
                         value={rfqCompany}
                         onChange={(e) => setRfqCompany(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#0f3b70] focus:bg-white"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
                       />
                     </div>
                   </div>
@@ -2135,7 +2135,7 @@ export default function Landing() {
                         placeholder="e.g. +255 712 345 678"
                         value={rfqContact}
                         onChange={(e) => setRfqContact(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#0f3b70] focus:bg-white"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
                       />
                     </div>
 
@@ -2147,7 +2147,7 @@ export default function Landing() {
                         id="rfq-sector"
                         value={rfqSector}
                         onChange={(e) => setRfqSector(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#0f3b70] focus:bg-white"
+                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#287A74] focus:bg-white"
                       >
                         <option value="hotels">Hotel, Resort or Safari Lodge</option>
                         <option value="offices">Corporate Office / Campus</option>
@@ -2166,7 +2166,7 @@ export default function Landing() {
                       id="rfq-frequency"
                       value={rfqFrequency}
                       onChange={(e) => setRfqFrequency(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#0f3b70] focus:bg-white"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#287A74] focus:bg-white"
                     >
                       <option value="Daily Early Morning (5:30 AM)">Daily Early Morning (5:30 AM)</option>
                       <option value="Weekly Standing Order">Weekly Standing Order</option>
@@ -2177,8 +2177,8 @@ export default function Landing() {
 
                   {/* Cart Summary if items added */}
                   {totalCartCount > 0 && (
-                    <div className="rounded-xl border border-blue-200 bg-blue-50/70 p-3 text-xs">
-                      <div className="flex items-center justify-between font-bold text-[#0f3b70]">
+                    <div className="rounded-xl border border-[#287A74]/20 bg-[#287A74]/10 p-3 text-xs">
+                      <div className="flex items-center justify-between font-bold text-[#287A74]">
                         <span>Items Attached from Catalog:</span>
                         <span>{totalCartCount} items selected</span>
                       </div>
@@ -2189,7 +2189,7 @@ export default function Landing() {
                           return (
                             <span
                               key={pId}
-                              className="rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-blue-200"
+                              className="rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-[#287A74]/20"
                             >
                               {prod.name} × {qty}
                             </span>
@@ -2210,7 +2210,7 @@ export default function Landing() {
                       placeholder="List commodities needed (e.g. 5 crates tomatoes, 10 crates water, 2 drums 20L oil) and delivery address..."
                       value={rfqNotes}
                       onChange={(e) => setRfqNotes(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs outline-none transition focus:border-[#0f3b70] focus:bg-white"
+                      className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
                     />
                   </div>
 
@@ -2238,7 +2238,7 @@ export default function Landing() {
       <section id="faq" className="section-reveal py-20 bg-white">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#0f3b70]">
+            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
               Clarity & Compliance
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
@@ -2280,13 +2280,13 @@ export default function Landing() {
                 >
                   <button
                     onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="flex w-full items-center justify-between p-5 text-left text-sm font-bold text-slate-900 hover:text-[#0f3b70]"
+                    className="flex w-full items-center justify-between p-5 text-left text-sm font-bold text-slate-900 hover:text-[#287A74]"
                   >
                     <span>{faq.q}</span>
                     <ChevronDown
                       size={18}
                       className={`text-slate-400 transition-transform duration-200 ${
-                        isOpen ? "rotate-180 text-[#0f3b70]" : ""
+                        isOpen ? "rotate-180 text-[#287A74]" : ""
                       }`}
                     />
                   </button>
@@ -2306,7 +2306,7 @@ export default function Landing() {
           14. BOTTOM CTA BANNER (Mercora Style)
       ---------------------------------------------------- */}
       <section className="section-reveal px-4 py-12 sm:px-6">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-gradient-to-r from-[#0a2547] via-[#0f3b70] to-[#1a559e] p-8 sm:p-14 text-white shadow-2xl relative">
+        <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-gradient-to-r from-[#0b2524] via-[#287A74] to-[#389d95] p-8 sm:p-14 text-white shadow-2xl relative">
           <div className="relative z-10 max-w-2xl space-y-4">
             <span className="text-xs font-bold tracking-wider uppercase text-amber-300">
               Upgrade Your Supply Chain Today
@@ -2340,7 +2340,7 @@ export default function Landing() {
       {/* ----------------------------------------------------
           15. FOOTER (With Brand Watermark like Mercora full.webp)
       ---------------------------------------------------- */}
-      <footer className="relative overflow-hidden bg-[#071629] text-white pt-16 pb-12">
+      <footer className="relative overflow-hidden bg-[#071817] text-white pt-16 pb-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 pb-12 border-b border-white/10">
             {/* Brand column */}
@@ -2493,7 +2493,7 @@ export default function Landing() {
             <div>
               <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div className="flex items-center gap-2">
-                  <ShoppingBag size={20} className="text-[#0f3b70]" />
+                  <ShoppingBag size={20} className="text-[#287A74]" />
                   <h3 className="font-display text-lg font-bold text-slate-900">Your Quote Basket</h3>
                 </div>
                 <button
@@ -2516,7 +2516,7 @@ export default function Landing() {
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
-                    className="mt-6 rounded-xl bg-[#0f3b70] px-5 py-2.5 text-xs font-bold text-white"
+                    className="mt-6 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white"
                   >
                     Explore Products
                   </button>
@@ -2534,7 +2534,7 @@ export default function Landing() {
                         <div className="pr-2">
                           <h4 className="font-bold text-slate-900">{prod.name}</h4>
                           <span className="text-[11px] text-slate-500">{prod.packSize}</span>
-                          <span className="block font-semibold text-[#0f3b70]">{prod.priceEstimate}</span>
+                          <span className="block font-semibold text-[#287A74]">{prod.priceEstimate}</span>
                         </div>
 
                         <div className="flex items-center rounded-lg border border-slate-200 bg-white">
@@ -2563,12 +2563,12 @@ export default function Landing() {
               <div className="border-t border-slate-100 pt-4 space-y-3">
                 <div className="flex items-center justify-between text-xs font-bold text-slate-800">
                   <span>Total Selected Units:</span>
-                  <span className="text-base text-[#0f3b70]">{totalCartCount} Packs</span>
+                  <span className="text-base text-[#287A74]">{totalCartCount} Packs</span>
                 </div>
                 <a
                   href="#quote-section"
                   onClick={() => setIsCartOpen(false)}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#0f3b70] py-3 text-xs font-bold text-white hover:bg-[#1a4f8b] transition"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#287A74] py-3 text-xs font-bold text-white hover:bg-[#328e87] transition"
                 >
                   <span>Proceed to Finalize RFQ</span>
                   <ArrowRight size={14} />
@@ -2590,7 +2590,7 @@ export default function Landing() {
       ---------------------------------------------------- */}
       {totalCartCount > 0 && !isCartOpen && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-xl">
-          <div className="flex items-center justify-between rounded-2xl border border-white/30 bg-[#0f3b70]/95 px-5 py-3.5 text-white shadow-2xl backdrop-blur-md">
+          <div className="flex items-center justify-between rounded-2xl border border-white/30 bg-[#287A74]/95 px-5 py-3.5 text-white shadow-2xl backdrop-blur-md">
             <div className="flex items-center gap-3">
               <div className="grid h-8 w-8 place-items-center rounded-xl bg-amber-400 text-slate-950 font-bold text-xs">
                 {totalCartCount}
@@ -2629,7 +2629,7 @@ export default function Landing() {
       >
         <button
           onClick={() => scrollTo(0)}
-          className="group relative flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-[#0f3b70] hover:text-[#0f3b70] hover:shadow-2xl"
+          className="group relative flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-slate-800 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-110 hover:border-[#287A74] hover:text-[#287A74] hover:shadow-2xl"
           aria-label="Scroll to top"
         >
           <svg className="absolute inset-0 -rotate-90" width="48" height="48">
@@ -2645,7 +2645,7 @@ export default function Landing() {
               cx="24"
               cy="24"
               r="20"
-              stroke="#0f3b70"
+              stroke="#287A74"
               strokeWidth="2.5"
               fill="transparent"
               strokeDasharray={125.6}
