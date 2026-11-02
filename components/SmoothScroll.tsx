@@ -84,6 +84,15 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
             offset: -85,
             duration: 1.2,
           });
+
+          // Instantly safeguard visibility of target section and contents
+          if (targetElement instanceof HTMLElement) {
+            gsap.to(targetElement, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" });
+            const childReveals = targetElement.querySelectorAll<HTMLElement>(".section-reveal, .catalog-card");
+            if (childReveals.length > 0) {
+              gsap.to(childReveals, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" });
+            }
+          }
         }
       } catch {
         // Fallback for non-standard selector
@@ -97,10 +106,15 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       ScrollTrigger.refresh();
     };
     window.addEventListener("resize", handleResize);
+    window.addEventListener("load", handleResize);
+
+    // Initial calculation refresh once Lenis is bound
+    ScrollTrigger.refresh();
 
     return () => {
       document.removeEventListener("click", handleAnchorClick);
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("load", handleResize);
       gsap.ticker.remove(tickerCallback);
       lenisInstance.destroy();
       lenisRef.current = null;
@@ -113,6 +127,22 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     } else if (typeof target === "string" && target.startsWith("#")) {
       const el = document.querySelector(target);
       el?.scrollIntoView({ behavior: "smooth" });
+    }
+
+    // Safety reveal for target element if target is a selector string
+    if (typeof target === "string" && target.startsWith("#")) {
+      try {
+        const el = document.querySelector(target);
+        if (el instanceof HTMLElement) {
+          gsap.to(el, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" });
+          const childReveals = el.querySelectorAll<HTMLElement>(".section-reveal, .catalog-card");
+          if (childReveals.length > 0) {
+            gsap.to(childReveals, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" });
+          }
+        }
+      } catch {}
+    } else if (target instanceof HTMLElement) {
+      gsap.to(target, { opacity: 1, y: 0, duration: 0.4, overwrite: "auto" });
     }
   }, []);
 

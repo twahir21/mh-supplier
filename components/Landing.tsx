@@ -591,6 +591,21 @@ export default function Landing() {
     return () => clearTimeout(timer);
   }, [activeCategory, activeSector, searchQuery, selectedSectorTab]);
 
+  // Refresh ScrollTrigger when images and full layout finish loading
+  useEffect(() => {
+    const handleLoad = () => {
+      ScrollTrigger.refresh();
+    };
+    if (typeof window !== "undefined") {
+      if (document.readyState === "complete") {
+        ScrollTrigger.refresh();
+      } else {
+        window.addEventListener("load", handleLoad);
+        return () => window.removeEventListener("load", handleLoad);
+      }
+    }
+  }, []);
+
   // GSAP Animations with ScrollTrigger & MatchMedia
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -704,35 +719,48 @@ export default function Landing() {
           });
         });
 
-        // 5. Section reveals (slide up + soft fade)
+        // 5. Section reveals (slide up + soft fade with bulletproof fromTo)
         gsap.utils.toArray<HTMLElement>(".section-reveal").forEach((section) => {
-          gsap.from(section, {
-            y: 35,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: section,
-              start: "top 85%",
-              once: true,
-            },
-          });
+          gsap.fromTo(
+            section,
+            { y: 35, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: "power2.out",
+              immediateRender: false,
+              scrollTrigger: {
+                trigger: section,
+                start: "top 88%",
+                once: true,
+                onEnter: () => {
+                  gsap.to(section, { opacity: 1, y: 0, duration: 0.5, overwrite: "auto" });
+                },
+              },
+            }
+          );
         });
 
         // 6. Categories grid 3D stagger
-        gsap.from(".category-card", {
-          y: 35,
-          opacity: 0,
-          scale: 0.94,
-          stagger: 0.08,
-          duration: 0.7,
-          ease: "back.out(1.2)",
-          scrollTrigger: {
-            trigger: ".categories-container",
-            start: "top 85%",
-            once: true,
-          },
-        });
+        gsap.fromTo(
+          ".category-card",
+          { y: 35, opacity: 0, scale: 0.94 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            stagger: 0.08,
+            duration: 0.7,
+            ease: "back.out(1.2)",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: ".categories-container",
+              start: "top 85%",
+              once: true,
+            },
+          }
+        );
 
         // 7. Interactive Delivery Route Animation in "How It Works"
         if (processTrackRef.current && processVanRef.current) {
@@ -757,18 +785,23 @@ export default function Landing() {
         }
 
         // Staggered step cards
-        gsap.from(".process-card", {
-          y: 40,
-          opacity: 0,
-          stagger: 0.2,
-          duration: 0.7,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#how-it-works",
-            start: "top 75%",
-            once: true,
-          },
-        });
+        gsap.fromTo(
+          ".process-card",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.2,
+            duration: 0.7,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: "#how-it-works",
+              start: "top 75%",
+              once: true,
+            },
+          }
+        );
 
         // 8. Smart Estimator Parallax Image
         gsap.to(".fleet-image-inner", {
@@ -797,59 +830,63 @@ export default function Landing() {
         });
 
         // 10. Logistics Assurance Cards Stagger
-        gsap.from(".assurance-card", {
-          y: 30,
-          opacity: 0,
-          stagger: 0.1,
-          duration: 0.6,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".assurance-grid",
-            start: "top 80%",
-            once: true,
-          },
-        });
+        gsap.fromTo(
+          ".assurance-card",
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.1,
+            duration: 0.6,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: ".assurance-grid",
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
 
         // 11. Client Testimonials Stagger
-        gsap.from(".testimonial-card", {
-          y: 40,
-          opacity: 0,
-          stagger: 0.15,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".testimonials-grid",
-            start: "top 80%",
-            once: true,
-          },
-        });
+        gsap.fromTo(
+          ".testimonial-card",
+          { y: 40, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            stagger: 0.15,
+            duration: 0.8,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: ".testimonials-grid",
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
 
         // 12. RFQ Quote Section Ambient Spotlight Scale
-        gsap.from(".quote-ambient-glow", {
-          scale: 0.6,
-          opacity: 0.1,
-          duration: 1.4,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#quote-section",
-            start: "top 80%",
-            once: true,
-          },
-        });
+        gsap.fromTo(
+          ".quote-ambient-glow",
+          { scale: 0.6, opacity: 0.1 },
+          {
+            scale: 1,
+            opacity: 1,
+            duration: 1.4,
+            ease: "power2.out",
+            immediateRender: false,
+            scrollTrigger: {
+              trigger: "#quote-section",
+              start: "top 80%",
+              once: true,
+            },
+          }
+        );
 
-        // 13. Catalog cards initial entrance
-        gsap.from(".catalog-card", {
-          y: 30,
-          opacity: 0,
-          stagger: 0.05,
-          duration: 0.5,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#catalog-grid",
-            start: "top 85%",
-            once: true,
-          },
-        });
+        // 13. Ensure dynamic catalog items are always visible and ready
+        gsap.set(".catalog-card", { opacity: 1, y: 0 });
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
