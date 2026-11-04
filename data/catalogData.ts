@@ -10,11 +10,12 @@ import {
   HardHat,
   Hotel,
   UtensilsCrossed,
+  Layers,
   type LucideIcon,
 } from "lucide-react";
 
 export type SectorId = "all" | "hotels" | "offices" | "construction" | "catering";
-export type CategoryId = "all" | "eggs" | "vegetables" | "fruits" | "beverages" | "groceries" | "snacks" | "cooking_oil";
+export type CategoryId = "all" | "eggs" | "vegetables" | "fruits" | "beverages" | "groceries" | "snacks" | "cooking_oil" | "hygiene";
 
 export type Product = {
   id: string;
@@ -152,6 +153,21 @@ export const CATEGORIES: CategoryDetail[] = [
     popularItems: ["Sunflower Oil 20L", "All-Purpose Oil 10L", "Culinary Shortening 15kg"],
     perk: "Zero Cholesterol • High Smoke Point",
     description: "Triple-refined light sunflower oil in 20L heavy-duty cans, stable commercial vegetable oil, and professional bakery shortening.",
+  },
+  {
+    id: "hygiene",
+    name: "Tissues & Hotel Paper Supplies",
+    title: "Hospitality Tissues & Paper Provisions",
+    count: "4 Commercial Varieties",
+    icon: Layers,
+    badge: "Hospitality Grade",
+    color: "bg-teal-50/70 text-teal-900 border-teal-200",
+    borderColor: "hover:border-teal-500",
+    accentGradient: "from-teal-500/15 via-teal-500/5 to-transparent",
+    iconBg: "bg-teal-600 text-white shadow-teal-600/30",
+    popularItems: ["Luxury 2-Ply Toilet Paper (48 Rolls)", "Commercial Facial Tissue Boxes", "Kitchen Towel Jumbo Rolls", "Restroom Jumbo Roll Tissue (JTR)"],
+    perk: "100% Virgin Pulp • High Absorbency",
+    description: "Wholesale bulk toilet paper rolls, boxed facial tissues, embossed kitchen roll towels, and restroom paper products for Zanzibar resorts, boutique villas, corporate restrooms, and site offices.",
   },
 ];
 
@@ -529,6 +545,62 @@ export const PRODUCTS: Product[] = [
     description: "Specially formulated shortening for fluffy bakery pastries and industrial food service.",
     icon: Droplets,
   },
+  // Hotel & Office Hygiene Supplies (Tissues & Paper Products)
+  {
+    id: "hyg-1",
+    name: "Luxury 2-Ply Hotel Toilet Paper (Toilet Paper ya Hoteli)",
+    category: "hygiene",
+    categoryName: "Tissues & Hotel Paper Supplies",
+    packSize: "Bale of 48 Rolls (Individually Wrapped)",
+    priceEstimate: "TZS 42,000 / bale",
+    grade: "100% Virgin Soft Pulp • 200 Sheets/Roll",
+    inStock: true,
+    sectors: ["hotels", "offices", "catering"],
+    description: "Individually wrapped 2-ply soft toilet paper rolls designed for Zanzibar resort guest bathrooms, luxury boutique villas, and executive office suites.",
+    icon: Layers,
+    badge: "Resort Standard",
+  },
+  {
+    id: "hyg-2",
+    name: "Executive Facial Tissue Boxes (Sanduku za Tissue)",
+    category: "hygiene",
+    categoryName: "Tissues & Hotel Paper Supplies",
+    packSize: "Carton of 24 Boxes (150 sheets/box)",
+    priceEstimate: "TZS 38,000 / carton",
+    grade: "Ultra-Soft 2-Ply Lint-Free",
+    inStock: true,
+    sectors: ["hotels", "offices"],
+    description: "Soft absorbent facial tissue dispenser boxes for hotel guest rooms, bedside tables, conference conference halls, and corporate reception areas.",
+    icon: Layers,
+    badge: "Office & Villa Favorite",
+  },
+  {
+    id: "hyg-3",
+    name: "Heavy-Duty Embossed Kitchen Towel Rolls",
+    category: "hygiene",
+    categoryName: "Tissues & Hotel Paper Supplies",
+    packSize: "Pack of 12 Jumbo Twin Rolls",
+    priceEstimate: "TZS 28,000 / pack",
+    grade: "Heavy-Duty Absorbent Oil & Water Wipe",
+    inStock: true,
+    sectors: ["hotels", "catering", "construction"],
+    description: "High tensile strength embossed kitchen paper rolls for commercial restaurant kitchens, food preparation surfaces, and chef stations.",
+    icon: Layers,
+    badge: "Kitchen Grade",
+  },
+  {
+    id: "hyg-4",
+    name: "Industrial Jumbo Roll Tissue (JTR) for Restrooms",
+    category: "hygiene",
+    categoryName: "Tissues & Hotel Paper Supplies",
+    packSize: "Pack of 6 Rolls (300m / roll)",
+    priceEstimate: "TZS 45,000 / pack",
+    grade: "High-Traffic Commercial Restroom Grade",
+    inStock: true,
+    sectors: ["offices", "construction", "catering"],
+    description: "High-capacity jumbo toilet roll rolls for high-traffic office buildings, construction worker camps, and restaurant public washrooms.",
+    icon: Layers,
+  },
 ];
 
 export const SECTORS = [
@@ -600,36 +672,40 @@ export const SECTORS = [
 
 export const SMART_PRESETS = [
   {
-    title: "🏨 Luxury Hotel 7-Day Breakfast (150 Guests)",
+    title: "🏨 Luxury Hotel 7-Day Breakfast & Resort Supplies (150 Guests)",
     sector: "hotels",
-    note: "Chef-selected fresh fruits, vegetables, beverages & culinary oils",
+    note: "Chef-selected fresh eggs (Mayai), fruits, vegetables, oils & guest toilet paper",
     items: [
+      { name: "Grade-A Table Eggs (Mayai ya Kisasa)", qty: "15 trays (450 eggs)" },
       { name: "Grade-A Roma Tomatoes", qty: "4 crates (100kg)" },
       { name: "Sweet Cavendish Bananas", qty: "6 crates (120kg)" },
       { name: "Sweet Coastal Pineapples", qty: "4 boxes (40 count)" },
       { name: "100% Pure Tropical Fruit Juices", qty: "8 cartons (96L)" },
       { name: "Pure Refined Sunflower Oil", qty: "3 jerrycans (60L)" },
       { name: "Aromatic Basmati Rice", qty: "4 sacks (100kg)" },
+      { name: "Luxury 2-Ply Hotel Toilet Paper", qty: "2 bales (96 rolls)" },
     ],
   },
   {
-    title: "🏢 Corporate Office Monthly Pantry (80 Staff)",
+    title: "🏢 Corporate Office Monthly Pantry & Hygiene (80 Staff)",
     sector: "offices",
-    note: "All-in-one monthly water, beverages, weekly fruit crates & snacks",
+    note: "All-in-one monthly water, beverages, weekly fruit crates, snacks & facial tissues",
     items: [
       { name: "Natural Spring Water 500ml", qty: "20 cartons (480 bottles)" },
       { name: "Assorted Coca-Cola Sodas", qty: "8 crates (192 cans)" },
       { name: "Crisp Royal Gala Apples", qty: "3 cartons (54kg)" },
       { name: "Sweet Cavendish Bananas", qty: "4 crates (80kg)" },
       { name: "Executive Biscuit Assortment", qty: "4 cases (192 packs)" },
+      { name: "Executive Facial Tissue Boxes", qty: "2 cartons (48 boxes)" },
       { name: "Coffee & Spiced Tea Kit", qty: "2 master packs" },
     ],
   },
   {
     title: "🏗️ Construction Site Mess Hall (100 Workers)",
     sector: "construction",
-    note: "Heavy bulk staple grains, cooking oil, beans & daily hydration",
+    note: "Heavy bulk staple grains, eggs, cooking oil, beans & daily hydration",
     items: [
+      { name: "Grade-A Table Eggs (Mayai)", qty: "20 trays (600 eggs)" },
       { name: "Dutch Ware Potatoes", qty: "8 sacks (400kg)" },
       { name: "Polished Red Kidney Beans", qty: "4 sacks (200kg)" },
       { name: "All-Purpose Cooking Oil", qty: "6 drums (120L)" },

@@ -609,22 +609,23 @@ export default function Landing() {
             <div className="space-y-6">
               <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase text-amber-300 backdrop-blur-md">
                 <Sparkles size={14} className="text-amber-400" />
-                <span>Premier B2B Fresh & Commercial Supply</span>
+                <span>Premier B2B Fresh & Commercial Supply • Zanzibar</span>
               </div>
 
               <h1 className="hero-heading font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl lg:leading-[1.1]">
                 <span className="block overflow-hidden">
-                  <span>The Smarter Way to Source</span>
+                  <span>Zanzibar Wholesale Food Supplier</span>
                 </span>
                 <span className="block overflow-hidden text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-yellow-200 to-emerald-300">
-                  <span>Fresh Produce & Bulk Supplies.</span>
+                  <span>Fresh Eggs, Produce & Bulk Goods.</span>
                 </span>
               </h1>
 
               <p className="hero-desc max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
-                MH General Suppliers delivers farm-fresh vegetables, seasonal fruits, wholesale beverages,
-                commercial groceries, snacks, and pure cooking oils. One dependable partner for luxury hotels,
-                corporate offices, and construction sites with guaranteed next-morning cold delivery.
+                MH General Suppliers delivers farm-fresh eggs (Mayai ya Kisasa & Kienyeji), crisp vegetables,
+                seasonal fruits, wholesale beverages, bulk rice, beans, cooking oils, tissues, and hotel toilet paper.
+                One dependable B2B partner for luxury Zanzibar beach resorts, hotels, corporate offices, and
+                construction sites with guaranteed next-morning dock delivery.
               </p>
 
               {/* CTAs */}
@@ -1636,24 +1637,32 @@ export default function Landing() {
           <div className="mt-12 space-y-3">
             {[
               {
-                q: "What is your order cutoff time for next-morning delivery?",
-                a: "For next-morning delivery (between 05:00 AM and 07:30 AM), orders should be placed or confirmed by 18:00 (6:00 PM). Standing repeat orders run automatically without daily cutoff requirements.",
+                q: "What is your order cutoff time for next-morning delivery in Zanzibar?",
+                a: "For next-morning delivery (between 05:00 AM and 07:30 AM) across Zanzibar (including Stone Town, Nungwi, Kendwa, and Paje), orders should be placed or confirmed by 18:00 (6:00 PM). Standing repeat orders run automatically without daily cutoff requirements.",
+              },
+              {
+                q: "What wholesale egg options (Mayai) do you supply to hotels and bakeries?",
+                a: "Mayai is our #1 bestselling commodity in Zanzibar. We supply Grade-A candled table eggs (Mayai ya Kisasa) and organic free-range eggs (Mayai ya Kienyeji) in standard 30-egg trays and heavy-duty 360-egg master crates. We provide standing daily deliveries to hotel breakfast buffets with a zero-crack guarantee.",
+              },
+              {
+                q: "Which regions and beach resort zones in Zanzibar do you deliver to?",
+                a: "We provide comprehensive island-wide distribution across Zanzibar: Stone Town, Urban West, Northern beach resorts (Nungwi, Kendwa), Eastern shores (Paje, Jambiani, Michamvi), North-East (Kiwengwa, Matemwe), and South (Fumba Town, Kizimkazi), with dedicated coastal connections to Dar es Salaam.",
               },
               {
                 q: "What are the payment terms for commercial accounts?",
                 a: "We support flexible corporate terms: Net-15 and Net-30 invoicing for vetted corporate clients, bank transfers, credit terms upon trade reference verification, and Cash/EFT on Delivery for trial orders.",
               },
               {
+                q: "Can we combine fresh produce, eggs, beverages, dry grains, and hotel toilet paper on one invoice?",
+                a: "Yes! That is our primary core value. Instead of dealing with separate market vendors for produce, beverages, dry rations, and cleaning supplies, you receive one consolidated morning delivery, one manifest, and one monthly invoice covering eggs, produce, beverages, grains, cooking oil, and hotel toilet paper.",
+              },
+              {
                 q: "How does your quality guarantee and replacement policy work?",
                 a: "We inspect produce both at farm intake and before dispatch. When our driver arrives, your receiving manager checks the consignment. If any crate does not meet your specifications, we replace it on the same morning route run at no extra cost.",
               },
               {
-                q: "Do you deliver to remote or active construction sites?",
-                a: "Yes. Our delivery fleet includes heavy-duty all-terrain distribution vehicles capable of accessing active civil works, industrial parks, and high-rise construction zones with safety-compliant PPE drivers.",
-              },
-              {
-                q: "Can we combine fresh produce, beverages, and bulk groceries on one invoice?",
-                a: "Yes! That is our primary core value. Instead of dealing with five different market vendors, you receive one consolidated monthly invoice, one delivery manifest, and one accountable contact.",
+                q: "Do you deliver bulk groceries, rice, beans, and cooking oil to construction sites?",
+                a: "Yes. Our delivery fleet includes heavy-duty all-terrain distribution vehicles capable of accessing active civil works, industrial parks, and high-rise construction zones with safety-compliant PPE drivers delivering 25kg/50kg sacks of rice, flour, beans, and hydration crates.",
               },
             ].map((faq, idx) => {
               const isOpen = openFaq === idx;
@@ -1715,6 +1724,163 @@ export default function Landing() {
               >
                 <Phone size={16} /> Call Hotline: +255 700 000 000
               </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------
+          14B. COMMERCIAL SOURCING DIRECTORY & SEO KEYWORDS INDEX
+      ---------------------------------------------------- */}
+      <section
+        id="commercial-directory"
+        aria-label="Commercial Wholesale Directory and Keyword Index"
+        className="section-reveal border-t border-slate-200 bg-slate-50 py-16"
+      >
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 border-b border-slate-200 pb-8">
+            <div>
+              <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
+                Commercial Index & Search Directory
+              </span>
+              <h2 className="mt-2 font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
+                Zanzibar Wholesale Food & Operational Supplies Hub
+              </h2>
+              <p className="mt-2 max-w-3xl text-xs sm:text-sm text-slate-600 leading-relaxed">
+                Direct procurement guide for luxury hotels, coastal resorts, catering operations, corporate pantries,
+                and construction camps across Unguja, Pemba, and the coastal corridor.
+              </p>
+            </div>
+            <Link
+              href="/catalog"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[#1f5f5a] transition self-start md:self-auto shrink-0"
+            >
+              <span>Explore Complete Catalog</span>
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Group 1: Fresh Eggs (Mayai) */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full inline-block">
+                #1 Bestseller • Zanzibar
+              </span>
+              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
+                Fresh Farm Eggs (Mayai ya Jumla)
+              </h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Daily machine-sorted and candled eggs in shockproof 30-egg trays and 360-egg master crates for hotel breakfast buffets, bakeries, and kitchens.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[
+                  "Grade-A Table Eggs",
+                  "Mayai ya Kienyeji",
+                  "Hotel Buffet Standing Orders",
+                  "360-Egg Master Boxes",
+                  "Zero-Crack Guarantee",
+                ].map((tag) => (
+                  <Link
+                    key={tag}
+                    href="/catalog?category=eggs"
+                    className="rounded-md bg-slate-100 hover:bg-amber-100 hover:text-amber-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Group 2: Fresh Produce & Farm Vegetables */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block">
+                Dawn Farm Harvest
+              </span>
+              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
+                Vegetables & Tropical Fruits
+              </h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Chef-graded tomatoes, red bulb onions, Irish potatoes, sweet coastal pineapples, bananas, and watermelons delivered directly to dock receivers.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[
+                  "Roma Tomatoes (Nyanya)",
+                  "Red Bulb Onions (Vitunguu)",
+                  "Highland Potatoes (Viazi)",
+                  "Coastal Pineapples",
+                  "Cavendish Bananas",
+                  "Sweet Watermelons",
+                ].map((tag) => (
+                  <Link
+                    key={tag}
+                    href="/catalog?category=vegetables"
+                    className="rounded-md bg-slate-100 hover:bg-emerald-100 hover:text-emerald-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Group 3: Grains, Cooking Oil & Hygiene */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full inline-block">
+                Bulk Commodities & Paper
+              </span>
+              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
+                Grains, Oils & Hotel Tissues
+              </h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Aromatic Basmati rice, kidney beans, 20L pure cooking oil, 2-ply luxury hotel toilet paper rolls (48-pack), and executive facial tissue boxes.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[
+                  "Basmati Rice 25kg",
+                  "Kidney Beans (Maharage)",
+                  "Sunflower Oil 20L",
+                  "Luxury Hotel Toilet Paper",
+                  "Facial Tissue Dispenser Boxes",
+                  "Kitchen Heavy Rolls",
+                ].map((tag) => (
+                  <Link
+                    key={tag}
+                    href="/catalog?category=groceries"
+                    className="rounded-md bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* Group 4: Delivery Zones & Regional Sourcing */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full inline-block">
+                Island-Wide Coverage
+              </span>
+              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
+                Zanzibar Delivery Zones
+              </h3>
+              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
+                Daily scheduled route runs from 05:00 AM across all major tourism hubs, construction projects, and corporate commercial centers.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {[
+                  "Stone Town Commercial Hub",
+                  "Nungwi & Kendwa Beach Resorts",
+                  "Paje & Jambiani Hotels",
+                  "Kiwengwa & Matemwe Lodges",
+                  "Fumba Town Projects",
+                  "Dar es Salaam Transit",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-md bg-slate-100 text-slate-700 px-2 py-1 text-[11px] font-medium"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -1784,6 +1950,12 @@ export default function Landing() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/catalog?category=hygiene" className="hover:text-amber-400 transition flex items-center justify-between">
+                    <span>Tissues & Hotel Paper Supplies</span>
+                    <span className="text-[10px] text-teal-400 font-bold">Hygiene</span>
+                  </Link>
+                </li>
+                <li>
                   <Link href="/catalog?category=snacks" className="hover:text-amber-400 transition">
                     Office Snacks & Breakroom Kits
                   </Link>
@@ -1841,7 +2013,7 @@ export default function Landing() {
                 </li>
                 <li className="flex items-center gap-2">
                   <MapPin size={14} className="text-amber-400" />
-                  <span>Central Wholesale Terminal, Dar es Salaam</span>
+                  <span>Central Wholesale Hub, Stone Town, Zanzibar</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <Clock size={14} className="text-emerald-400" />

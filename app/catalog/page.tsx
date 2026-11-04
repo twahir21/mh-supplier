@@ -197,11 +197,12 @@ function CatalogContent() {
                 <span>Commercial Order Matrix • Live Wholesale Rates</span>
               </div>
               <h1 className="mt-3 font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-                Wholesale Product Catalog & Pricing
+                Wholesale Product Catalog & Pricing • Zanzibar
               </h1>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 sm:text-base">
-                Select pack quantities below to instantly build an itemized purchase order for your procurement
-                team. Guaranteed cold-chain delivery to your dock before kitchen prep starts.
+                Browse commercial wholesale commodities across Zanzibar: Farm-fresh eggs (Mayai ya Kisasa & Kienyeji),
+                organic vegetables, seasonal fruits, bulk rice, cooking oil, soft drinks, and hotel toilet paper & tissue supplies.
+                Build an itemized quotation with next-morning resort dock delivery.
               </p>
 
               {/* Trust Badges */}
