@@ -19,7 +19,23 @@ export default function JsonLd() {
     image: `${baseUrl}/images/produce.jpg`,
     description:
       "Premier B2B wholesale food distributor & commercial supplier in Zanzibar and Tanzania. Farm-fresh eggs (Mayai ya Kisasa na Kienyeji), fresh vegetables, tropical fruits, soft drinks, natural spring water, bulk rice, beans, cooking oil, and hotel toilet paper & tissue supplies delivered daily to luxury hotels, beach resorts, corporate offices, restaurants, and construction sites.",
-    telephone: "+255700000000",
+    telephone: "+255779973333",
+    contactPoint: [
+      {
+        "@type": "ContactPoint",
+        telephone: "+255779973333",
+        contactType: "sales and wholesale orders",
+        areaServed: ["TZ-01", "TZ-02", "TZ-03", "TZ"],
+        availableLanguage: ["English", "Swahili"],
+      },
+      {
+        "@type": "ContactPoint",
+        telephone: "+255776147097",
+        contactType: "customer service and WhatsApp support",
+        areaServed: ["TZ-01", "TZ-02", "TZ-03", "TZ"],
+        availableLanguage: ["English", "Swahili"],
+      },
+    ],
     email: "orders@mhsuppliers.co.tz",
     currenciesAccepted: "TZS, USD",
     paymentAccepted:

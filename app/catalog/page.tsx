@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo, useEffect, Suspense } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -15,38 +15,38 @@ import {
   ArrowRight,
   Phone,
   Truck,
-  CheckCircle2,
   X,
   FileSpreadsheet,
-  Send,
   MessageSquare,
   ShieldCheck,
-  ChevronDown,
 } from "lucide-react";
 import { PRODUCTS, CATEGORIES, type CategoryId, type SectorId } from "@/data/catalogData";
 import { useCart } from "@/context/CartContext";
 
 function CatalogContent() {
   const searchParams = useSearchParams();
-  const initialCategory = (searchParams.get("category") as CategoryId) || "all";
+  const categoryParam = searchParams.get("category") as CategoryId;
+  const validCategoryParam =
+    categoryParam && (categoryParam === "all" || CATEGORIES.some((c) => c.id === categoryParam))
+      ? categoryParam
+      : "all";
 
-  const [activeCategory, setActiveCategory] = useState<CategoryId>(initialCategory);
+  const [activeCategory, setActiveCategory] = useState<CategoryId>(validCategoryParam);
+  const [prevCategoryParam, setPrevCategoryParam] = useState(validCategoryParam);
+
+  // Sync category from URL param during render without cascading effect renders
+  if (validCategoryParam !== prevCategoryParam) {
+    setPrevCategoryParam(validCategoryParam);
+    setActiveCategory(validCategoryParam);
+  }
+
   const [activeSector, setActiveSector] = useState<SectorId>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedQuote, setCopiedQuote] = useState(false);
 
-  // Sync category from URL param if query changes
-  useEffect(() => {
-    const cat = searchParams.get("category") as CategoryId;
-    if (cat && (cat === "all" || CATEGORIES.some((c) => c.id === cat))) {
-      setActiveCategory(cat);
-    }
-  }, [searchParams]);
-
   const {
     cart,
     updateQuantity,
-    setCart,
     clearCart,
     totalCartCount,
     isCartOpen,
@@ -78,7 +78,7 @@ function CatalogContent() {
       .filter(Boolean)
       .join("%0A");
 
-    return `https://wa.me/255700000000?text=Hello%20MH%20General%20Suppliers,%20I%20would%20like%20to%20request%20an%20official%20commercial%20quote%20for%20the%20following%20items:%0A%0A${items}%0A%0APlease%20provide%20delivery%20schedule%20and%20Net-30%20invoicing%20terms.`;
+    return `https://wa.me/255776147097?text=Habari%20MH%20General%20Suppliers%20Zanzibar,%20I%20would%20like%20to%20request%20an%20official%20commercial%20quote%20for%20the%20following%20items:%0A%0A${items}%0A%0APlease%20provide%20delivery%20schedule%20to%20our%20facility%20and%20commercial%20invoicing%20terms.`;
   };
 
   const copyQuoteText = () => {
@@ -108,16 +108,29 @@ function CatalogContent() {
             <span>Next dispatch window locks at 10:00 PM for 05:30 AM drop-off.</span>
           </div>
 
-          <div className="flex items-center gap-6">
-            <span className="hidden items-center gap-1.5 text-slate-300 sm:flex">
-              <Truck size={14} className="text-amber-400" /> Cold-Chain Transit Guaranteed
+          <div className="flex items-center gap-4 text-xs">
+            <span className="hidden items-center gap-1.5 text-slate-300 md:flex">
+              <Truck size={14} className="text-amber-400" /> Zanzibar Cold-Chain Transit
             </span>
-            <a
-              href="tel:+255700000000"
-              className="flex items-center gap-1.5 font-bold text-white transition hover:text-amber-400"
-            >
-              <Phone size={14} className="text-emerald-400" /> +255 700 000 000
-            </a>
+            <div className="flex items-center gap-3">
+              <a
+                href="tel:+255779973333"
+                className="flex items-center gap-1 font-bold text-white transition hover:text-amber-400"
+                title="Call 0779973333"
+              >
+                <Phone size={13} className="text-emerald-400" /> 0779 973 333
+              </a>
+              <span className="text-slate-500">|</span>
+              <a
+                href="https://wa.me/255776147097"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 font-bold text-amber-300 transition hover:text-white"
+                title="WhatsApp 0776147097"
+              >
+                <MessageSquare size={13} className="text-emerald-400" /> 0776 147 097
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -149,11 +162,11 @@ function CatalogContent() {
                 />
               </div>
               <div className="flex flex-col">
-                <span className="font-display text-lg font-extrabold tracking-tight text-[#287A74]">
-                  MH GENERAL SUPPLIERS
+                <span className="font-display text-base sm:text-lg font-extrabold tracking-tight text-[#287A74] leading-tight">
+                  MH SUPPLIERS
                 </span>
-                <span className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">
-                  Wholesale Catalog & RFQ Matrix
+                <span className="text-[10px] font-bold tracking-widest uppercase text-amber-600">
+                  Zanzibar
                 </span>
               </div>
             </Link>
@@ -188,8 +201,19 @@ function CatalogContent() {
       {/* ----------------------------------------------------
           3. HERO / PAGE HEADER
       ---------------------------------------------------- */}
-      <section className="border-b border-slate-200 bg-gradient-to-b from-[#0b2524] via-[#103332] to-[#0b2524] py-14 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <section className="relative overflow-hidden border-b border-slate-200 bg-gradient-to-b from-[#0b2524] via-[#103332] to-[#0b2524] py-14 text-white">
+        {/* Zanzibar Beach & Palms Ambient Layer */}
+        <div className="pointer-events-none absolute inset-0 opacity-15 mix-blend-overlay">
+          <Image
+            src="/images/zanzibar-beach.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0b2524] via-transparent to-[#0b2524]" />
+        </div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
           <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
             <div>
               <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-950/60 px-3 py-1 text-xs font-bold uppercase tracking-wider text-emerald-300">
@@ -460,10 +484,18 @@ function CatalogContent() {
                 Reset All Filters
               </button>
               <a
-                href="tel:+255700000000"
-                className="rounded-xl border border-slate-300 bg-white px-5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
+                href="tel:+255779973333"
+                className="flex items-center gap-2 rounded-xl bg-emerald-600 px-5 py-2.5 text-xs font-bold text-white hover:bg-emerald-500 transition"
               >
-                Call Procurement Desk
+                <Phone size={14} /> Call: 0779 973 333
+              </a>
+              <a
+                href="https://wa.me/255776147097?text=Habari%20MH%20Suppliers%2C%20I%20need%20a%20custom%20procurement%20quote"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
+              >
+                <MessageSquare size={14} className="text-emerald-600" /> WhatsApp: 0776 147 097
               </a>
             </div>
           </div>

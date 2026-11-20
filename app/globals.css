@@ -18,6 +18,14 @@
   --color-brand-slate-dark: #0f172a;
   --color-brand-slate-muted: #64748b;
   --color-brand-surface: #f8fafc;
+  --color-brand-zanzibar-ocean: #0b4f48;
+  --color-brand-zanzibar-turquoise: #0d9488;
+  --color-brand-zanzibar-lagoon: #14b8a6;
+  --color-brand-zanzibar-sand: #faf5eb;
+  --color-brand-zanzibar-sun: #f59e0b;
+  --color-brand-zanzibar-spice: #c2410c;
+  --color-slate-50: #fbf6ec;
+  --color-slate-100: #f3ead8;
   --font-display: var(--font-bricolage), system-ui, -apple-system, sans-serif;
   --font-sans: var(--font-manrope), system-ui, -apple-system, sans-serif;
 }
@@ -49,7 +57,12 @@ html.lenis body {
 }
 
 body {
-  background-color: #f8fafc;
+  background-color: #fbf6ec;
+  background-image:
+    radial-gradient(ellipse at top right, rgba(20, 184, 166, 0.12), transparent 55%),
+    radial-gradient(ellipse at bottom left, rgba(245, 158, 11, 0.08), transparent 50%),
+    linear-gradient(180deg, #f2fbf9 0%, #fbf6ec 40%, #f7eedd 100%);
+  background-attachment: fixed;
   color: #0f172a;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -114,7 +127,7 @@ body {
 
 /* Glassmorphism helpers */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 252, 245, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 255, 255, 0.6);
@@ -127,6 +140,17 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* Zanzibar Environmental Side Wings Masking */
+.zanzibar-side-mask-left {
+  mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 45%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to right, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 45%, rgba(0, 0, 0, 0) 100%);
+}
+
+.zanzibar-side-mask-right {
+  mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 45%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to left, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 45%, rgba(0, 0, 0, 0) 100%);
+}
+
 /* Custom subtle scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -134,16 +158,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: #f3ead8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #5eb8ad;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #0d9488;
 }
 
 @media (prefers-reduced-motion: reduce) {

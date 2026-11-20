@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import confetti from "canvas-confetti";
 import {
-  Building2,
-  HardHat,
-  Hotel,
-  UtensilsCrossed,
   Truck,
   ShieldCheck,
   Clock,
@@ -33,7 +29,6 @@ import {
   FileSpreadsheet,
   ChevronUp,
   MessageSquare,
-  type LucideIcon,
 } from "lucide-react";
 import { useLenis } from "@/components/SmoothScroll";
 import { useCart } from "@/context/CartContext";
@@ -60,7 +55,6 @@ export default function Landing() {
     cart,
     updateQuantity,
     setCart,
-    clearCart,
     totalCartCount,
     isCartOpen,
     setIsCartOpen,
@@ -496,16 +490,29 @@ export default function Landing() {
             </span>
           </div>
 
-          <div className="hidden items-center gap-6 sm:flex">
+          <div className="hidden items-center gap-5 sm:flex">
             <span className="flex items-center gap-1.5 text-slate-300">
-              <Truck size={14} className="text-amber-400" /> Cold-Chain Transit Guaranteed
+              <Truck size={14} className="text-amber-400" /> Zanzibar Cold-Chain Transit
             </span>
-            <a
-              href="tel:+255700000000"
-              className="flex items-center gap-1.5 font-bold text-white transition hover:text-amber-400"
-            >
-              <Phone size={14} className="text-emerald-400" /> +255 700 000 000
-            </a>
+            <div className="flex items-center gap-3">
+              <a
+                href="tel:+255779973333"
+                className="flex items-center gap-1.5 font-bold text-white transition hover:text-amber-400"
+                title="Call 0779973333"
+              >
+                <Phone size={13} className="text-emerald-400" /> 0779 973 333
+              </a>
+              <span className="text-slate-600">|</span>
+              <a
+                href="https://wa.me/255776147097"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 font-bold text-amber-300 transition hover:text-white"
+                title="WhatsApp 0776147097"
+              >
+                <MessageSquare size={13} className="text-emerald-400" /> 0776 147 097
+              </a>
+            </div>
           </div>
         </div>
       </div>
@@ -515,8 +522,8 @@ export default function Landing() {
       ---------------------------------------------------- */}
       <header
         className={`sticky top-0 z-40 border-b transition-all duration-300 ${isScrolled
-            ? "border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-md"
-            : "border-slate-200/60 bg-white/90 backdrop-blur-sm"
+          ? "border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-md"
+          : "border-slate-200/60 bg-white/90 backdrop-blur-sm"
           }`}
       >
         <div
@@ -524,42 +531,36 @@ export default function Landing() {
             }`}
         >
           {/* Logo */}
-          <a href="#top" className="flex items-center gap-3 group">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-[#287A74] shadow-sm transition group-hover:scale-105">
+          <a href="#top" className="flex items-center gap-2.5 group shrink-0">
+            <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[#287A74] shadow-sm transition group-hover:scale-105">
               <Image
                 src="/logo.jpeg"
-                alt="MH General Suppliers Logo"
+                alt="MH Suppliers Logo"
                 fill
                 className="object-contain"
                 priority
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-xl font-extrabold tracking-tight text-[#287A74]">
-                MH GENERAL SUPPLIERS
+              <span className="font-display text-lg font-extrabold tracking-tight text-[#287A74] leading-tight">
+                MH SUPPLIERS
               </span>
-              <span className="text-[11px] font-semibold tracking-wider uppercase text-slate-500">
-                Fresh Produce & Commercial Logistics
+              <span className="text-[10px] font-bold tracking-widest uppercase text-amber-600">
+                Zanzibar
               </span>
             </div>
           </a>
 
-          {/* Desktop Nav */}
+          {/* Clean Spaced Desktop Nav */}
           <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex" aria-label="Main">
             <Link href="/catalog" className="transition hover:text-[#287A74]">
-              Wholesale Catalog
+              Catalog
             </Link>
             <a href="#sectors" className="transition hover:text-[#287A74]">
-              Sectors We Supply
+              Sectors
             </a>
-            <a href="#how-it-works" className="transition hover:text-[#287A74]">
-              How It Works
-            </a>
-            <a href="#smart-assistant" className="transition hover:text-[#287A74]">
-              Smart Estimator
-            </a>
-            <a href="#logistics" className="transition hover:text-[#287A74]">
-              Cold-Chain Fleet
+            <a href="#zanzibar-routes" className="transition hover:text-[#287A74]">
+              Island Routes
             </a>
             <a href="#faq" className="transition hover:text-[#287A74]">
               FAQ
@@ -567,14 +568,14 @@ export default function Landing() {
           </nav>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5 shrink-0">
             {/* Cart Trigger */}
             <button
               onClick={() => setIsCartOpen(!isCartOpen)}
-              className="relative flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs font-bold text-slate-700 transition hover:border-[#287A74] hover:bg-[#287A74]/10"
+              className="relative flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#287A74] hover:bg-[#287A74]/10"
               aria-label="Open Quote Basket"
             >
-              <ShoppingBag size={18} className="text-[#287A74]" />
+              <ShoppingBag size={16} className="text-[#287A74]" />
               <span className="hidden sm:inline">RFQ Basket</span>
               {totalCartCount > 0 && (
                 <span className="grid h-5 w-5 place-items-center rounded-full bg-amber-500 text-[11px] font-extrabold text-slate-900">
@@ -586,10 +587,10 @@ export default function Landing() {
             {/* Request a Quote CTA */}
             <a
               href="#quote-section"
-              className="group flex items-center gap-2 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-[#071a19]/25 transition hover:bg-[#328e87] hover:shadow-lg"
+              className="group flex items-center gap-1.5 rounded-xl bg-[#287A74] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#071a19]/20 transition hover:bg-[#328e87]"
             >
               <span>Request Quote</span>
-              <ArrowRight size={14} className="transition group-hover:translate-x-0.5" />
+              <ArrowRight size={13} className="transition group-hover:translate-x-0.5" />
             </a>
           </div>
         </div>
@@ -599,6 +600,18 @@ export default function Landing() {
           3. HERO SECTION (Mercora inspired + Wholesale Produce)
       ---------------------------------------------------- */}
       <section className="hero-section relative overflow-hidden bg-gradient-to-b from-[#0b2524] via-[#287A74] to-[#1a5a55] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
+        {/* Zanzibar East Shore & Turquoise Ocean Background Atmosphere */}
+        <div className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay">
+          <Image
+            src="/images/zanzibar-east-shore.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1a5a55] via-transparent to-[#0b2524]" />
+        </div>
+
         {/* Soft Background Accents */}
         <div className="hero-ambient-orb-1 pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#287A74]/20 blur-3xl will-change-transform" />
         <div className="hero-ambient-orb-2 pointer-events-none absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl will-change-transform" />
@@ -607,9 +620,9 @@ export default function Landing() {
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
             {/* Left Content */}
             <div className="space-y-6">
-              <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase text-amber-300 backdrop-blur-md">
+              <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase text-amber-300 backdrop-blur-md">
                 <Sparkles size={14} className="text-amber-400" />
-                <span>Premier B2B Fresh & Commercial Supply • Zanzibar</span>
+                <span>Karibu Zanzibar 🌴 Premier Island B2B Food & Resort Logistics</span>
               </div>
 
               <h1 className="hero-heading font-display text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl lg:leading-[1.1]">
@@ -622,28 +635,45 @@ export default function Landing() {
               </h1>
 
               <p className="hero-desc max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
-                MH General Suppliers delivers farm-fresh eggs (Mayai ya Kisasa & Kienyeji), crisp vegetables,
-                seasonal fruits, wholesale beverages, bulk rice, beans, cooking oils, tissues, and hotel toilet paper.
-                One dependable B2B partner for luxury Zanzibar beach resorts, hotels, corporate offices, and
-                construction sites with guaranteed next-morning dock delivery.
+                MH General Suppliers is Zanzibar&apos;s premier wholesale partner. From Stone Town&apos;s central hub directly
+                to beachfront resorts in Nungwi, Kendwa, Kiwengwa, Paje, and Jambiani, we deliver farm-fresh eggs (Mayai ya Kisasa &amp; Kienyeji),
+                crisp vegetables, tropical fruits, bulk rice, cooking oils, and hotel supplies with guaranteed 05:30 AM kitchen dock drop-off.
               </p>
 
               {/* CTAs */}
-              <div className="hero-ctas flex flex-wrap items-center gap-4 pt-2">
+              <div className="hero-ctas flex flex-wrap items-center gap-3 pt-2">
                 <a
                   href="#quote-section"
-                  className="group flex items-center gap-2.5 rounded-xl bg-amber-500 px-7 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition hover:bg-amber-400 hover:scale-[1.02]"
+                  className="group flex items-center gap-2.5 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition hover:bg-amber-400 hover:scale-[1.02]"
                 >
                   <span>Request Instant Quotation</span>
                   <ArrowRight size={16} className="transition group-hover:translate-x-1" />
                 </a>
 
+                <a
+                  href="https://wa.me/255776147097?text=Habari%20MH%20Suppliers%2C%20I%20would%20like%20to%20inquire%20about%20wholesale%20supplies"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-600/30 px-5 py-3.5 text-sm font-bold text-emerald-200 backdrop-blur-md transition hover:bg-emerald-600/50 hover:text-white"
+                >
+                  <MessageSquare size={16} className="text-emerald-400" />
+                  <span>WhatsApp: 0776 147 097</span>
+                </a>
+
+                <a
+                  href="tel:+255779973333"
+                  className="flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:border-white hover:bg-white/20"
+                >
+                  <Phone size={15} className="text-amber-300" />
+                  <span>Call: 0779 973 333</span>
+                </a>
+
                 <Link
                   href="/catalog"
-                  className="flex items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-md transition hover:border-white hover:bg-white/20"
+                  className="hidden xl:flex items-center gap-2 rounded-xl border border-white/20 bg-black/20 px-4 py-3.5 text-sm font-semibold text-slate-300 backdrop-blur-md transition hover:text-white hover:bg-white/10"
                 >
-                  <Search size={16} className="text-amber-300" />
-                  <span>Browse Wholesale Catalog</span>
+                  <Search size={15} className="text-amber-300" />
+                  <span>Catalog</span>
                 </Link>
               </div>
 
@@ -672,6 +702,12 @@ export default function Landing() {
                     <span className="text-slate-300">Consolidated monthly billing</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Zanzibar Island Route Footnote */}
+              <div className="flex items-center gap-2 pt-4 text-[11px] font-medium text-emerald-200/80">
+                <span className="flex h-1.5 w-1.5 rounded-full bg-amber-400" />
+                <span>Unguja &amp; Pemba Corridors: Stone Town • Nungwi • Kendwa • Kiwengwa • Paje • Jambiani • Kizimkazi • Fumba</span>
               </div>
             </div>
 
@@ -975,8 +1011,8 @@ export default function Landing() {
                   key={sec.id}
                   onClick={() => setSelectedSectorTab(idx)}
                   className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-bold transition ${selectedSectorTab === idx
-                      ? "bg-[#287A74] text-white shadow-md"
-                      : "text-slate-600 hover:text-slate-900"
+                    ? "bg-[#287A74] text-white shadow-md"
+                    : "text-slate-600 hover:text-slate-900"
                     }`}
                 >
                   <sec.icon size={18} />
@@ -1026,10 +1062,18 @@ export default function Landing() {
                     Set Up Supply for {SECTORS[selectedSectorTab].title}
                   </a>
                   <a
-                    href="tel:+255700000000"
+                    href="tel:+255779973333"
                     className="flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
                   >
-                    <Phone size={14} /> Talk to Sector Specialist
+                    <Phone size={14} className="text-[#287A74]" /> Specialist: 0779 973 333
+                  </a>
+                  <a
+                    href="https://wa.me/255776147097"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
+                  >
+                    <MessageSquare size={14} className="text-emerald-600" /> WhatsApp: 0776 147 097
                   </a>
                 </div>
               </div>
@@ -1321,6 +1365,169 @@ export default function Landing() {
       </section>
 
       {/* ----------------------------------------------------
+          10B. ZANZIBAR ARCHIPELAGO DELIVERY CORRIDORS
+      ---------------------------------------------------- */}
+      <section id="zanzibar-routes" className="section-reveal relative overflow-hidden py-20 bg-gradient-to-b from-white via-[#0b2524]/5 to-slate-50 border-t border-slate-200">
+        {/* Zanzibar East Shore Aerial Water Texture */}
+        <div className="pointer-events-none absolute inset-0 opacity-15 mix-blend-multiply">
+          <Image
+            src="/images/zanzibar-east-shore.jpg"
+            alt=""
+            fill
+            className="object-cover object-center"
+          />
+        </div>
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-[#0d9488]/30 bg-[#0d9488]/10 px-4 py-1.5 text-xs font-bold text-[#0b4f48]">
+              <Sparkles size={14} className="text-[#0d9488]" />
+              <span className="tracking-wide uppercase">🌴 Karibu Zanzibar • Visiwani Cold-Chain Express</span>
+            </div>
+            <h2 className="mt-3 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl tracking-tight">
+              Island-Wide Logistics Across Unguja &amp; Pemba
+            </h2>
+            <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
+              From the historic docks of Stone Town to the white sandy shorelines of Nungwi and Jambiani, our multi-temperature fleet powers daily resort kitchens, restaurants, villas, and construction camps across Zanzibar.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {/* Corridor 1: North Shore */}
+            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 to-emerald-500" />
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">🏖️</span>
+                  <span className="rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
+                    05:00 AM Dawn Drop
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
+                  North Shore Resort Route
+                </h3>
+                <span className="text-xs font-semibold text-[#0d9488]">Nungwi &amp; Kendwa Beach</span>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                  Daily priority delivery to 5-star beachfront resorts, ocean villas, and executive kitchens before breakfast buffet preparations begin.
+                </p>
+                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
+                  <p><strong className="text-slate-700">Top Freight:</strong> Mayai ya Kisasa, Salad Greens, Ripe Pineapples, Cooking Oils.</p>
+                  <p><strong className="text-slate-700">Key Hubs:</strong> Kendwa Rocks, Nungwi Bay, Matemwe.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Corridor 2: Stone Town & Central */}
+            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#287A74] to-cyan-500" />
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">🏛️</span>
+                  <span className="rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
+                    15m Rapid Dispatch
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
+                  Stone Town &amp; Urban Hub
+                </h3>
+                <span className="text-xs font-semibold text-[#0d9488]">Port, Malindi &amp; Fumba</span>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                  Multiple intra-day supply runs for heritage boutique hotels, government pantries, corporate offices, maritime provisioning, and Fumba Town.
+                </p>
+                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
+                  <p><strong className="text-slate-700">Top Freight:</strong> Basmati Rice, Cured Onions, Drinking Water, Restroom Tissues.</p>
+                  <p><strong className="text-slate-700">Key Hubs:</strong> Forodhani, Malindi Port, Chukwani, Fumba.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Corridor 3: East & South Coast */}
+            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-400 to-amber-500" />
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">🏄‍♂️</span>
+                  <span className="rounded-full bg-teal-50 border border-teal-200/60 px-2.5 py-0.5 text-[10px] font-bold text-teal-800">
+                    Daily 06:30 AM Route
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
+                  East &amp; South Coast Route
+                </h3>
+                <span className="text-xs font-semibold text-[#0d9488]">Paje, Jambiani &amp; Kiwengwa</span>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                  Refrigerated transit catering to eco-lodges, kitesurfing camps, boutique villas, and seafood grill houses along the turquoise coast.
+                </p>
+                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
+                  <p><strong className="text-slate-700">Top Freight:</strong> Mayai ya Kienyeji, Tropical Melons, Soft Drinks, Bakery Flour.</p>
+                  <p><strong className="text-slate-700">Key Hubs:</strong> Kiwengwa, Paje Strip, Jambiani, Kizimkazi.</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Corridor 4: Pemba Island */}
+            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-emerald-400" />
+              <div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl">⛵</span>
+                  <span className="rounded-full bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 text-[10px] font-bold text-blue-800">
+                    Scheduled Maritime
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
+                  Pemba Island Maritime Link
+                </h3>
+                <span className="text-xs font-semibold text-[#0d9488]">Chake Chake, Wete &amp; Mkoani</span>
+                <p className="mt-3 text-xs leading-relaxed text-slate-600">
+                  Scheduled ferry container crates and consolidated institutional consignments to Pemba Island lodges, diving resorts, and camps.
+                </p>
+                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
+                  <p><strong className="text-slate-700">Top Freight:</strong> Heavy Dry Goods, 20L Cooking Oil Cans, Wholesale Water.</p>
+                  <p><strong className="text-slate-700">Key Hubs:</strong> Chake Chake Port, Wete, Mkoani.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Route Contact Banner */}
+          <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#0b2524] to-[#1a5a55] p-6 text-white sm:flex-row sm:px-8">
+            <div className="flex items-center gap-3">
+              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-400 text-slate-950 font-bold">
+                <Truck size={20} />
+              </div>
+              <div>
+                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
+                  Zanzibar Fleet Dispatch Desk
+                </span>
+                <p className="text-xs text-slate-200 sm:text-sm">
+                  Need a standing delivery window for your hotel, villa or construction site?
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="tel:+255779973333"
+                className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition"
+              >
+                <Phone size={13} />
+                <span>Call 0779 973 333</span>
+              </a>
+              <a
+                href="https://wa.me/255776147097"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1.5 rounded-xl border border-emerald-400/50 bg-emerald-600/30 px-4 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-600/50 hover:text-white transition"
+              >
+                <MessageSquare size={13} className="text-emerald-400" />
+                <span>WhatsApp 0776 147 097</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ----------------------------------------------------
           11. CLIENT TESTIMONIALS
       ---------------------------------------------------- */}
       <section className="section-reveal py-20 bg-slate-50 border-t border-slate-200">
@@ -1330,7 +1537,7 @@ export default function Landing() {
               Operational Proof
             </span>
             <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-              Trusted by Procurement Managers Across the Region
+              Trusted by Procurement Managers Across Zanzibar
             </h2>
           </div>
 
@@ -1338,24 +1545,24 @@ export default function Landing() {
             {[
               {
                 quote:
-                  "MH General Suppliers completely transformed our morning kitchen prep. Produce arrives at 5:15 AM sharp with tomatoes and greens at uniform ripeness. Their cooking oil pricing is unmatched.",
+                  "MH General Suppliers completely transformed our morning kitchen prep. 25 crates of farm-fresh Mayai ya Kisasa and chef produce arrive at 5:15 AM sharp with tomatoes and greens at uniform ripeness. Their cooking oil pricing is unmatched in Zanzibar.",
                 author: "Chef David M.",
                 role: "Executive Head Chef",
-                sector: "5-Star Waterfront Hotel & Resort",
+                sector: "5-Star Kendwa Beachfront Resort, Zanzibar",
               },
               {
                 quote:
-                  "Managing breakroom drinks and weekly fresh fruit for 140 staff used to consume 6 hours every Monday. MH delivers the full order in one shot with clean consolidated monthly invoicing.",
+                  "Managing breakroom drinks and weekly fresh fruit for 140 staff used to consume 6 hours every Monday. MH delivers the full order across Stone Town in one shot with clean consolidated monthly invoicing.",
                 author: "Sarah K.",
                 role: "Head of Workplace Operations",
-                sector: "Regional FinTech Campus",
+                sector: "Fumba Town Commercial Campus, Zanzibar",
               },
               {
                 quote:
-                  "Our infrastructure project has 220 workers on site. MH supplies 50kg sacks of rice, beans, cooking oil, and pallets of bottled water without fail, even through the rainy season.",
+                  "Our construction project has 220 workers on site in North Unguja. MH supplies 50kg sacks of rice, beans, cooking oil, and pallets of bottled water without fail, even through the coastal rains.",
                 author: "Eng. Joseph T.",
                 role: "Site Operations Director",
-                sector: "Coastal Highway Infrastructure Project",
+                sector: "Nungwi Coastal Infrastructure Project, Zanzibar",
               },
             ].map((t) => (
               <div
@@ -1406,9 +1613,26 @@ export default function Landing() {
                     <Phone size={18} />
                   </div>
                   <div>
-                    <span className="block text-xs text-slate-400">Direct Procurement Hotline</span>
-                    <a href="tel:+255700000000" className="font-bold text-white hover:text-amber-300">
-                      +255 700 000 000
+                    <span className="block text-xs text-slate-400">Primary Procurement Desk</span>
+                    <a href="tel:+255779973333" className="font-bold text-white hover:text-amber-300">
+                      0779 973 333 / +255 779 973 333
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/20 text-emerald-400">
+                    <MessageSquare size={18} />
+                  </div>
+                  <div>
+                    <span className="block text-xs text-slate-400">Logistics & WhatsApp Support Hotline</span>
+                    <a
+                      href="https://wa.me/255776147097"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-bold text-emerald-300 hover:text-white"
+                    >
+                      0776 147 097 / +255 776 147 097
                     </a>
                   </div>
                 </div>
@@ -1434,7 +1658,7 @@ export default function Landing() {
                   </div>
                   <div>
                     <span className="block text-xs text-slate-400">Logistics & Distribution Center</span>
-                    <span className="font-bold text-white">Central Wholesale Terminal, Dar es Salaam</span>
+                    <span className="font-bold text-white">Central Wholesale Terminal & Malindi Port, Stone Town, Zanzibar</span>
                   </div>
                 </div>
               </div>
@@ -1517,7 +1741,7 @@ export default function Landing() {
                         id="rfq-contact"
                         type="text"
                         required
-                        placeholder="e.g. +255 712 345 678"
+                        placeholder="e.g. 0779 973 333 or buyer@resort.co.tz"
                         value={rfqContact}
                         onChange={(e) => setRfqContact(e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
@@ -1699,6 +1923,15 @@ export default function Landing() {
       ---------------------------------------------------- */}
       <section className="section-reveal px-4 py-12 sm:px-6">
         <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-gradient-to-r from-[#0b2524] via-[#287A74] to-[#389d95] p-8 sm:p-14 text-white shadow-2xl relative">
+          {/* Zanzibar Dhow Maritime Ambient Background */}
+          <div className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay">
+            <Image
+              src="/images/zanzibar-dhow.jpg"
+              alt=""
+              fill
+              className="object-cover object-center"
+            />
+          </div>
           <div className="relative z-10 max-w-2xl space-y-4">
             <span className="text-xs font-bold tracking-wider uppercase text-amber-300">
               Upgrade Your Supply Chain Today
@@ -1711,7 +1944,7 @@ export default function Landing() {
               contract. Speak directly to our logistics team today.
             </p>
 
-            <div className="flex flex-wrap items-center gap-4 pt-4">
+            <div className="flex flex-wrap items-center gap-3.5 pt-4">
               <a
                 href="#quote-section"
                 className="rounded-xl bg-amber-500 px-7 py-3.5 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-400"
@@ -1719,10 +1952,18 @@ export default function Landing() {
                 Request Custom Quote
               </a>
               <a
-                href="tel:+255700000000"
-                className="flex items-center gap-2 rounded-xl border border-white/30 px-6 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm hover:bg-white/10 transition"
+                href="tel:+255779973333"
+                className="flex items-center gap-2 rounded-xl border border-white/30 px-5 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm hover:bg-white/10 transition"
               >
-                <Phone size={16} /> Call Hotline: +255 700 000 000
+                <Phone size={16} /> Hotline: 0779 973 333
+              </a>
+              <a
+                href="https://wa.me/255776147097"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-600/30 px-5 py-3.5 text-xs sm:text-sm font-bold text-emerald-200 backdrop-blur-sm hover:bg-emerald-600/50 hover:text-white transition"
+              >
+                <MessageSquare size={16} className="text-emerald-400" /> WhatsApp: 0776 147 097
               </a>
             </div>
           </div>
@@ -2000,23 +2241,42 @@ export default function Landing() {
             {/* Contact */}
             <div>
               <h4 className="font-display text-sm font-bold text-white uppercase tracking-wider">
-                Logistics Hub
+                Logistics Hub • Zanzibar
               </h4>
               <ul className="mt-4 space-y-3 text-xs text-slate-400">
-                <li className="flex items-center gap-2">
-                  <Phone size={14} className="text-amber-400" />
-                  <span>+255 700 000 000</span>
+                <li className="flex items-start gap-2">
+                  <Phone size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="block text-[11px] text-slate-500">Sales &amp; Direct Orders</span>
+                    <a href="tel:+255779973333" className="font-semibold text-slate-200 hover:text-amber-400">
+                      0779 973 333 / +255 779 973 333
+                    </a>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <MessageSquare size={14} className="text-emerald-400 shrink-0 mt-0.5" />
+                  <div>
+                    <span className="block text-[11px] text-slate-500">Customer Support &amp; WhatsApp</span>
+                    <a
+                      href="https://wa.me/255776147097"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-semibold text-emerald-300 hover:text-white"
+                    >
+                      0776 147 097 / +255 776 147 097
+                    </a>
+                  </div>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Mail size={14} className="text-amber-400" />
+                  <Mail size={14} className="text-amber-400 shrink-0" />
                   <span>orders@mhsuppliers.co.tz</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <MapPin size={14} className="text-amber-400" />
-                  <span>Central Wholesale Hub, Stone Town, Zanzibar</span>
+                <li className="flex items-start gap-2">
+                  <MapPin size={14} className="text-amber-400 shrink-0 mt-0.5" />
+                  <span>Central Wholesale Hub &amp; Malindi Port, Stone Town, Zanzibar</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <Clock size={14} className="text-emerald-400" />
+                  <Clock size={14} className="text-emerald-400 shrink-0" />
                   <span>Dispatch: Mon - Sat • 05:00 AM - 18:00 PM</span>
                 </li>
               </ul>
@@ -2136,6 +2396,21 @@ export default function Landing() {
                   <span>Proceed to Finalize RFQ</span>
                   <ArrowRight size={14} />
                 </a>
+                <a
+                  href={`https://wa.me/255776147097?text=Habari%20MH%20General%20Suppliers%20Zanzibar,%20I%20would%20like%20to%20order%20the%20following%20items:%0A%0A${Object.entries(cart)
+                    .map(([id, qty]) => {
+                      const p = PRODUCTS.find((prod) => prod.id === id);
+                      return p ? `• ${p.name} - ${qty} x ${p.packSize}` : null;
+                    })
+                    .filter(Boolean)
+                    .join("%0A")}%0A%0APlease%20confirm%20delivery%20schedule%20and%20rates.`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-emerald-50 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
+                >
+                  <MessageSquare size={14} className="text-emerald-600" />
+                  <span>Send Order to WhatsApp (0776 147 097)</span>
+                </a>
                 <button
                   onClick={() => setCart({})}
                   className="w-full text-center text-[11px] font-semibold text-slate-400 hover:text-red-600"
@@ -2221,6 +2496,36 @@ export default function Landing() {
             {scrollPercentage}% Top
           </span>
         </button>
+      </div>
+
+      {/* ----------------------------------------------------
+          19. FLOATING ZANZIBAR CONTACT & WHATSAPP DOCK (Bottom Left)
+      ---------------------------------------------------- */}
+      <div className="fixed bottom-6 left-6 z-40 flex items-center gap-2">
+        <a
+          href="https://wa.me/255776147097?text=Habari%20MH%20Suppliers%2C%20I%20would%20like%20to%20inquire%20about%20wholesale%20supplies"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-600 px-4 py-3 text-xs font-bold text-white shadow-xl shadow-emerald-950/30 backdrop-blur-md transition-all duration-300 hover:scale-105 hover:bg-emerald-500"
+          aria-label="Chat on WhatsApp 0776 147 097"
+        >
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-200 opacity-75" />
+            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-white" />
+          </span>
+          <MessageSquare size={16} />
+          <span className="hidden sm:inline">WhatsApp: 0776 147 097</span>
+          <span className="sm:hidden font-bold">0776 147 097</span>
+        </a>
+
+        <a
+          href="tel:+255779973333"
+          className="group flex items-center gap-2 rounded-full border border-slate-200 bg-white/95 px-3.5 py-3 text-xs font-bold text-slate-800 shadow-xl backdrop-blur-md transition-all duration-300 hover:scale-105 hover:border-[#287A74] hover:text-[#287A74]"
+          aria-label="Call 0779 973 333"
+        >
+          <Phone size={15} className="text-[#287A74]" />
+          <span className="hidden md:inline">Call: 0779 973 333</span>
+        </a>
       </div>
     </div>
   );

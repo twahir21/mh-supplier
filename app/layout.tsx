@@ -4,6 +4,7 @@ import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 import { CartProvider } from "@/context/CartContext";
 import JsonLd from "@/components/JsonLd";
+import ZanzibarEnvironmentSides from "@/components/ZanzibarEnvironmentSides";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -167,7 +168,8 @@ export default function RootLayout({
       <head>
         <JsonLd />
       </head>
-      <body className="antialiased selection:bg-amber-400 selection:text-slate-900">
+      <body className="antialiased selection:bg-amber-400 selection:text-slate-900 relative min-h-screen">
+        <ZanzibarEnvironmentSides />
         <SmoothScroll>
           <CartProvider>{children}</CartProvider>
         </SmoothScroll>

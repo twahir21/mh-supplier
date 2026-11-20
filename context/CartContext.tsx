@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from "react";
-import { PRODUCTS, SMART_PRESETS, type Product } from "@/data/catalogData";
+import { SMART_PRESETS } from "@/data/catalogData";
 
 type CartState = { [productId: string]: number };
 
@@ -36,12 +36,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
-        setCart(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        setTimeout(() => {
+          setCart(parsed);
+          setIsHydrated(true);
+        }, 0);
+        return;
       }
     } catch {
       // Ignore storage errors
     }
-    setIsHydrated(true);
+    setTimeout(() => {
+      setIsHydrated(true);
+    }, 0);
   }, []);
 
   // Save to localStorage whenever cart changes
