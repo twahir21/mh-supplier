@@ -5,52 +5,37 @@ import Image from "next/image";
 import Link from "next/link";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import confetti from "canvas-confetti";
 import {
   Truck,
   ShieldCheck,
-  Clock,
-  Phone,
-  Mail,
-  MapPin,
-  CheckCircle2,
+  FileSpreadsheet,
   ArrowRight,
-  ChevronDown,
+  Sparkles,
+  ShoppingBag,
+  MessageSquare,
+  Phone,
+  CheckCircle2,
   Search,
   Plus,
   Minus,
-  Sparkles,
-  ShoppingBag,
-  Send,
-  RefreshCw,
-  Flame,
-  Calendar,
   X,
-  FileSpreadsheet,
   ChevronUp,
-  MessageSquare,
 } from "lucide-react";
 import { useLenis } from "@/components/SmoothScroll";
 import { useCart } from "@/context/CartContext";
-import {
-  PRODUCTS,
-  CATEGORIES,
-  SECTORS,
-  SMART_PRESETS,
-} from "@/data/catalogData";
+import { PRODUCTS, CATEGORIES } from "@/data/catalogData";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooter from "@/components/SiteFooter";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-// ----------------------------------------------------
-// MAIN COMPONENT
-// ----------------------------------------------------
 export default function Landing() {
   const root = useRef<HTMLDivElement>(null);
   const { scrollTo, stop, start } = useLenis();
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
-  // Quotation Cart from shared context
   const {
     cart,
     updateQuantity,
@@ -58,100 +43,22 @@ export default function Landing() {
     totalCartCount,
     isCartOpen,
     setIsCartOpen,
-    applyPreset: contextApplyPreset,
-    rfqNotes,
-    setRfqNotes,
-    rfqSector,
-    setRfqSector,
   } = useCart();
 
-  // Scroll Animation Refs
-  const progressBarRef = useRef<HTMLDivElement>(null);
-  const processTrackRef = useRef<HTMLDivElement>(null);
-  const processVanRef = useRef<HTMLDivElement>(null);
-
-  // Scroll interactive states
   const [isScrolled, setIsScrolled] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [scrollPercentage, setScrollPercentage] = useState(0);
 
-  // RFQ Form State
-  const [rfqName, setRfqName] = useState("");
-  const [rfqCompany, setRfqCompany] = useState("");
-  const [rfqContact, setRfqContact] = useState("");
-  const [rfqFrequency, setRfqFrequency] = useState("Weekly Standing Order");
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [rfqReference, setRfqReference] = useState("");
-
-  // Wrap applyPreset to also scroll to the RFQ form smoothly
-  const applyPreset = (preset: (typeof SMART_PRESETS)[0]) => {
-    contextApplyPreset(preset);
-    const formEl = document.getElementById("quote-section");
-    if (formEl) {
-      scrollTo("#quote-section");
-    }
-  };
-
-  // Active sector tab in Sectors section
-  const [selectedSectorTab, setSelectedSectorTab] = useState(0);
-
-  // FAQ open item
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
-
-  // Dispatch countdown timer simulation
-  const [timeLeft, setTimeLeft] = useState({ hours: 2, minutes: 47, seconds: 19 });
-
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
-        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
-        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        return { hours: 4, minutes: 0, seconds: 0 };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Sync drawer with Lenis smooth scroll
-  useEffect(() => {
-    if (isCartOpen) {
-      stop();
-    } else {
-      start();
-    }
+    if (isCartOpen) stop();
+    else start();
   }, [isCartOpen, stop, start]);
 
-  // Refresh ScrollTrigger calculations on dynamic tab changes
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 120);
-    return () => clearTimeout(timer);
-  }, [selectedSectorTab]);
-
-  // Refresh ScrollTrigger when images and full layout finish loading
-  useEffect(() => {
-    const handleLoad = () => {
-      ScrollTrigger.refresh();
-    };
-    if (typeof window !== "undefined") {
-      if (document.readyState === "complete") {
-        ScrollTrigger.refresh();
-      } else {
-        window.addEventListener("load", handleLoad);
-        return () => window.removeEventListener("load", handleLoad);
-      }
-    }
-  }, []);
-
-  // GSAP Animations with ScrollTrigger & MatchMedia
   useEffect(() => {
     const ctx = gsap.context(() => {
       const mm = gsap.matchMedia();
-
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // 1. Top Reading Scroll Progress Bar
+        // Progress bar
         if (progressBarRef.current) {
           gsap.to(progressBarRef.current, {
             scaleX: 1,
@@ -162,8 +69,7 @@ export default function Landing() {
               end: "bottom bottom",
               scrub: 0.15,
               onUpdate: (self) => {
-                const progress = self.progress;
-                setScrollPercentage(Math.round(progress * 100));
+                setScrollPercentage(Math.round(self.progress * 100));
                 setShowBackToTop(self.scroll() > 380);
                 setIsScrolled(self.scroll() > 40);
               },
@@ -171,7 +77,7 @@ export default function Landing() {
           });
         }
 
-        // 2. Hero initial entrance reveal
+        // Hero entrance
         const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
         tl.from(".hero-badge", { y: -20, opacity: 0, duration: 0.6 })
           .from(".hero-heading span", { yPercent: 100, opacity: 0, duration: 0.8, stagger: 0.1 }, "-=0.3")
@@ -181,289 +87,74 @@ export default function Landing() {
           .from(".hero-image-card", { scale: 0.95, opacity: 0, duration: 0.9, ease: "back.out(1.4)" }, "-=0.7")
           .from(".floating-pill", { scale: 0.7, opacity: 0, stagger: 0.15, duration: 0.6 }, "-=0.4");
 
-        // 3. Hero Parallax Layers (Scrubbed with smooth scroll)
+        // Hero parallax
         gsap.to(".hero-ambient-orb-1", {
-          yPercent: 35,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.5,
-          },
+          yPercent: 35, ease: "none",
+          scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 0.5 },
         });
-
         gsap.to(".hero-ambient-orb-2", {
-          yPercent: -25,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: 0.5,
-          },
+          yPercent: -25, ease: "none",
+          scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 0.5 },
         });
-
         gsap.to(".floating-pill-top", {
-          yPercent: -45,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: 1,
-          },
+          yPercent: -45, ease: "none",
+          scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1 },
         });
-
         gsap.to(".floating-pill-bottom", {
-          yPercent: -25,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: 1.2,
-          },
+          yPercent: -25, ease: "none",
+          scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: 1.2 },
         });
-
         gsap.to(".hero-image-inner", {
-          yPercent: 10,
-          scale: 1.05,
-          ease: "none",
-          scrollTrigger: {
-            trigger: ".hero-section",
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
-          },
+          yPercent: 10, scale: 1.05, ease: "none",
+          scrollTrigger: { trigger: ".hero-section", start: "top top", end: "bottom top", scrub: true },
         });
 
-        // 4. Counters on scroll
+        // Counters
         gsap.utils.toArray<HTMLElement>("[data-counter]").forEach((el) => {
           const target = Number(el.dataset.counter);
           const suffix = el.dataset.suffix || "";
           const counterObj = { val: 0 };
           gsap.to(counterObj, {
-            val: target,
-            duration: 2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 90%",
-              once: true,
-            },
-            onUpdate: () => {
-              el.textContent = Math.round(counterObj.val).toLocaleString() + suffix;
-            },
+            val: target, duration: 2, ease: "power2.out",
+            scrollTrigger: { trigger: el, start: "top 90%", once: true },
+            onUpdate: () => { el.textContent = Math.round(counterObj.val).toLocaleString() + suffix; },
           });
         });
 
-        // 5. Section reveals (slide up + soft fade with bulletproof fromTo)
-        gsap.utils.toArray<HTMLElement>(".section-reveal").forEach((section) => {
-          gsap.fromTo(
-            section,
-            { y: 35, opacity: 0 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.8,
-              ease: "power2.out",
-              immediateRender: false,
-              scrollTrigger: {
-                trigger: section,
-                start: "top 88%",
-                once: true,
-                onEnter: () => {
-                  gsap.to(section, { opacity: 1, y: 0, duration: 0.5, overwrite: "auto" });
-                },
-              },
-            }
-          );
-        });
-
-        // 6. Categories grid 3D stagger
+        // Category cards
         gsap.fromTo(
           ".category-card",
           { y: 35, opacity: 0, scale: 0.94 },
           {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            stagger: 0.08,
-            duration: 0.7,
-            ease: "back.out(1.2)",
+            y: 0, opacity: 1, scale: 1, stagger: 0.08, duration: 0.7, ease: "back.out(1.2)",
             immediateRender: false,
-            scrollTrigger: {
-              trigger: ".categories-container",
-              start: "top 85%",
-              once: true,
-            },
+            scrollTrigger: { trigger: ".categories-container", start: "top 85%", once: true },
           }
         );
 
-        // 7. Interactive Delivery Route Animation in "How It Works"
-        if (processTrackRef.current && processVanRef.current) {
-          const routeTl = gsap.timeline({
-            scrollTrigger: {
-              trigger: "#how-it-works",
-              start: "top 75%",
-              end: "bottom 65%",
-              scrub: 0.4,
-            },
-          });
-
-          routeTl.to(processTrackRef.current, {
-            scaleX: 1,
-            ease: "none",
-          }, 0);
-
-          routeTl.to(processVanRef.current, {
-            left: "100%",
-            ease: "none",
-          }, 0);
-        }
-
-        // Staggered step cards
+        // Nav cards
         gsap.fromTo(
-          ".process-card",
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            stagger: 0.2,
-            duration: 0.7,
-            ease: "power2.out",
-            immediateRender: false,
-            scrollTrigger: {
-              trigger: "#how-it-works",
-              start: "top 75%",
-              once: true,
-            },
-          }
-        );
-
-        // 8. Smart Estimator Parallax Image
-        gsap.to(".fleet-image-inner", {
-          yPercent: 12,
-          scale: 1.08,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#smart-assistant",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-
-        // 9. Logistics Warehouse Parallax Image
-        gsap.to(".groceries-image-inner", {
-          yPercent: 10,
-          scale: 1.08,
-          ease: "none",
-          scrollTrigger: {
-            trigger: "#logistics",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          },
-        });
-
-        // 10. Logistics Assurance Cards Stagger
-        gsap.fromTo(
-          ".assurance-card",
+          ".nav-card",
           { y: 30, opacity: 0 },
           {
-            y: 0,
-            opacity: 1,
-            stagger: 0.1,
-            duration: 0.6,
-            ease: "power2.out",
+            y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: "power2.out",
             immediateRender: false,
-            scrollTrigger: {
-              trigger: ".assurance-grid",
-              start: "top 80%",
-              once: true,
-            },
+            scrollTrigger: { trigger: ".nav-cards-grid", start: "top 85%", once: true },
           }
         );
-
-        // 11. Client Testimonials Stagger
-        gsap.fromTo(
-          ".testimonial-card",
-          { y: 40, opacity: 0 },
-          {
-            y: 0,
-            opacity: 1,
-            stagger: 0.15,
-            duration: 0.8,
-            ease: "power2.out",
-            immediateRender: false,
-            scrollTrigger: {
-              trigger: ".testimonials-grid",
-              start: "top 80%",
-              once: true,
-            },
-          }
-        );
-
-        // 12. RFQ Quote Section Ambient Spotlight Scale
-        gsap.fromTo(
-          ".quote-ambient-glow",
-          { scale: 0.6, opacity: 0.1 },
-          {
-            scale: 1,
-            opacity: 1,
-            duration: 1.4,
-            ease: "power2.out",
-            immediateRender: false,
-            scrollTrigger: {
-              trigger: "#quote-section",
-              start: "top 80%",
-              once: true,
-            },
-          }
-        );
-
-        // 13. Ensure dynamic catalog items are always visible and ready
-        gsap.set(".catalog-card", { opacity: 1, y: 0 });
       });
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
-        // Immediate appearance for users preferring reduced motion
-        gsap.set(".section-reveal, .process-card, .category-card, .assurance-card, .testimonial-card, .catalog-card", {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-        });
+        gsap.set(".category-card, .nav-card", { opacity: 1, y: 0, scale: 1 });
       });
     }, root);
 
     return () => ctx.revert();
   }, []);
 
-
-
-  // Handle RFQ Submit
-  const handleRfqSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const refCode = `MH-RFQ-${Math.floor(1000 + Math.random() * 9000)}`;
-    setRfqReference(refCode);
-    setIsSubmitted(true);
-
-    // Fire celebratory confetti
-    confetti({
-      particleCount: 80,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: ["#287A74", "#f59e0b", "#059669", "#ffffff"],
-    });
-  };
-
   return (
     <div ref={root} className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-amber-400">
-      {/* ----------------------------------------------------
-          0. LUMINOUS SCROLL PROGRESS BAR (GSAP + Lenis)
-      ---------------------------------------------------- */}
+      {/* Scroll Progress Bar */}
       <div className="fixed top-0 left-0 right-0 z-50 h-[3px] pointer-events-none bg-slate-900/10">
         <div
           ref={progressBarRef}
@@ -472,153 +163,20 @@ export default function Landing() {
         />
       </div>
 
-      {/* ----------------------------------------------------
-          1. TOP DISPATCH & HOTLINE NOTIFICATION BAR
-      ---------------------------------------------------- */}
-      <div className="border-b border-[#287A74]/25 bg-[#071a19] text-xs font-medium text-slate-300">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 sm:px-6">
-          <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <span className="font-semibold text-white">Daily Dispatch Active:</span>
-            <span>
-              Next order cutoff in{" "}
-              <span className="font-mono font-bold text-amber-400">
-                {String(timeLeft.hours).padStart(2, "0")}h:{String(timeLeft.minutes).padStart(2, "0")}m:
-                {String(timeLeft.seconds).padStart(2, "0")}s
-              </span>{" "}
-              for guaranteed 05:30 AM drop-off.
-            </span>
-          </div>
+      <SiteHeader />
 
-          <div className="hidden items-center gap-5 sm:flex">
-            <span className="flex items-center gap-1.5 text-slate-300">
-              <Truck size={14} className="text-amber-400" /> Zanzibar Cold-Chain Transit
-            </span>
-            <div className="flex items-center gap-3">
-              <a
-                href="tel:+255779973333"
-                className="flex items-center gap-1.5 font-bold text-white transition hover:text-amber-400"
-                title="Call 0779973333"
-              >
-                <Phone size={13} className="text-emerald-400" /> 0779 973 333
-              </a>
-              <span className="text-slate-600">|</span>
-              <a
-                href="https://wa.me/255776147097"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 font-bold text-amber-300 transition hover:text-white"
-                title="WhatsApp 0776147097"
-              >
-                <MessageSquare size={13} className="text-emerald-400" /> 0776 147 097
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ----------------------------------------------------
-          2. ENTERPRISE HEADER
-      ---------------------------------------------------- */}
-      <header
-        className={`sticky top-0 z-40 border-b transition-all duration-300 ${isScrolled
-          ? "border-slate-200/90 bg-white/95 shadow-lg backdrop-blur-md"
-          : "border-slate-200/60 bg-white/90 backdrop-blur-sm"
-          }`}
-      >
-        <div
-          className={`mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 transition-all duration-300 ${isScrolled ? "h-16" : "h-20"
-            }`}
-        >
-          {/* Logo */}
-          <a href="#top" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-[#287A74] shadow-sm transition group-hover:scale-105">
-              <Image
-                src="/logo.jpeg"
-                alt="MH Suppliers Logo"
-                fill
-                className="object-contain"
-                priority
-              />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-lg font-extrabold tracking-tight text-[#287A74] leading-tight">
-                MH SUPPLIERS
-              </span>
-              <span className="text-[10px] font-bold tracking-widest uppercase text-amber-600">
-                Zanzibar
-              </span>
-            </div>
-          </a>
-
-          {/* Clean Spaced Desktop Nav */}
-          <nav className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex" aria-label="Main">
-            <Link href="/catalog" className="transition hover:text-[#287A74]">
-              Catalog
-            </Link>
-            <a href="#sectors" className="transition hover:text-[#287A74]">
-              Sectors
-            </a>
-            <a href="#zanzibar-routes" className="transition hover:text-[#287A74]">
-              Island Routes
-            </a>
-            <a href="#faq" className="transition hover:text-[#287A74]">
-              FAQ
-            </a>
-          </nav>
-
-          {/* Header Action Buttons */}
-          <div className="flex items-center gap-2.5 shrink-0">
-            {/* Cart Trigger */}
-            <button
-              onClick={() => setIsCartOpen(!isCartOpen)}
-              className="relative flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-[#287A74] hover:bg-[#287A74]/10"
-              aria-label="Open Quote Basket"
-            >
-              <ShoppingBag size={16} className="text-[#287A74]" />
-              <span className="hidden sm:inline">RFQ Basket</span>
-              {totalCartCount > 0 && (
-                <span className="grid h-5 w-5 place-items-center rounded-full bg-amber-500 text-[11px] font-extrabold text-slate-900">
-                  {totalCartCount}
-                </span>
-              )}
-            </button>
-
-            {/* Request a Quote CTA */}
-            <a
-              href="#quote-section"
-              className="group flex items-center gap-1.5 rounded-xl bg-[#287A74] px-4 py-2 text-xs font-bold text-white shadow-md shadow-[#071a19]/20 transition hover:bg-[#328e87]"
-            >
-              <span>Request Quote</span>
-              <ArrowRight size={13} className="transition group-hover:translate-x-0.5" />
-            </a>
-          </div>
-        </div>
-      </header>
-
-      {/* ----------------------------------------------------
-          3. HERO SECTION (Mercora inspired + Wholesale Produce)
-      ---------------------------------------------------- */}
+      {/* HERO */}
       <section className="hero-section relative overflow-hidden bg-gradient-to-b from-[#0b2524] via-[#287A74] to-[#1a5a55] pt-12 pb-24 text-white lg:pt-20 lg:pb-32">
-        {/* Zanzibar East Shore & Turquoise Ocean Background Atmosphere */}
         <div className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay">
-          <Image
-            src="/images/zanzibar-east-shore.jpg"
-            alt=""
-            fill
-            className="object-cover object-center"
-            priority
-          />
+          <Image src="/images/zanzibar-east-shore.jpg" alt="" fill className="object-cover object-center" priority />
           <div className="absolute inset-0 bg-gradient-to-t from-[#1a5a55] via-transparent to-[#0b2524]" />
         </div>
 
-        {/* Soft Background Accents */}
         <div className="hero-ambient-orb-1 pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full bg-[#287A74]/20 blur-3xl will-change-transform" />
         <div className="hero-ambient-orb-2 pointer-events-none absolute top-1/2 -right-40 h-96 w-96 rounded-full bg-amber-500/15 blur-3xl will-change-transform" />
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
-            {/* Left Content */}
             <div className="space-y-6">
               <div className="hero-badge inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold tracking-wide uppercase text-amber-300 backdrop-blur-md">
                 <Sparkles size={14} className="text-amber-400" />
@@ -636,19 +194,18 @@ export default function Landing() {
 
               <p className="hero-desc max-w-xl text-base leading-relaxed text-slate-200 sm:text-lg">
                 MH General Suppliers is Zanzibar&apos;s premier wholesale partner. From Stone Town&apos;s central hub directly
-                to beachfront resorts in Nungwi, Kendwa, Kiwengwa, Paje, and Jambiani, we deliver farm-fresh eggs (Mayai ya Kisasa &amp; Kienyeji),
-                crisp vegetables, tropical fruits, bulk rice, cooking oils, and hotel supplies with guaranteed 05:30 AM kitchen dock drop-off.
+                to beachfront resorts in Nungwi, Kendwa, Kiwengwa, Paje, and Jambiani — farm-fresh eggs, crisp vegetables,
+                tropical fruits, bulk rice, cooking oils, and hotel supplies with guaranteed 05:30 AM kitchen dock drop-off.
               </p>
 
-              {/* CTAs */}
               <div className="hero-ctas flex flex-wrap items-center gap-3 pt-2">
-                <a
-                  href="#quote-section"
+                <Link
+                  href="/quote"
                   className="group flex items-center gap-2.5 rounded-xl bg-amber-500 px-6 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/25 transition hover:bg-amber-400 hover:scale-[1.02]"
                 >
                   <span>Request Instant Quotation</span>
                   <ArrowRight size={16} className="transition group-hover:translate-x-1" />
-                </a>
+                </Link>
 
                 <a
                   href="https://wa.me/255776147097?text=Habari%20MH%20Suppliers%2C%20I%20would%20like%20to%20inquire%20about%20wholesale%20supplies"
@@ -677,7 +234,6 @@ export default function Landing() {
                 </Link>
               </div>
 
-              {/* B2B Assurance Bar */}
               <div className="hero-trust-bar grid grid-cols-3 gap-4 border-t border-white/15 pt-8 text-xs">
                 <div className="flex items-center gap-2">
                   <ShieldCheck size={20} className="shrink-0 text-emerald-400" />
@@ -686,7 +242,6 @@ export default function Landing() {
                     <span className="text-slate-300">Instant crate replacement</span>
                   </div>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <Truck size={20} className="shrink-0 text-amber-400" />
                   <div>
@@ -694,7 +249,6 @@ export default function Landing() {
                     <span className="text-slate-300">Before kitchen prep starts</span>
                   </div>
                 </div>
-
                 <div className="flex items-center gap-2">
                   <FileSpreadsheet size={20} className="shrink-0 text-teal-300" />
                   <div>
@@ -704,14 +258,13 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Zanzibar Island Route Footnote */}
               <div className="flex items-center gap-2 pt-4 text-[11px] font-medium text-emerald-200/80">
                 <span className="flex h-1.5 w-1.5 rounded-full bg-amber-400" />
-                <span>Unguja &amp; Pemba Corridors: Stone Town • Nungwi • Kendwa • Kiwengwa • Paje • Jambiani • Kizimkazi • Fumba</span>
+                <span>Unguja & Pemba Corridors: Stone Town • Nungwi • Kendwa • Kiwengwa • Paje • Jambiani • Kizimkazi • Fumba</span>
               </div>
             </div>
 
-            {/* Right Visual: Showcase & Floating Status Badges */}
+            {/* Hero Visual */}
             <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
               <div className="hero-image-card relative aspect-[4/3] overflow-hidden rounded-3xl border-2 border-white/20 shadow-2xl shadow-slate-950/40">
                 <Image
@@ -722,8 +275,6 @@ export default function Landing() {
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/20" />
-
-                {/* Overlaid Bottom Title */}
                 <div className="absolute bottom-6 left-6 right-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -738,7 +289,6 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Floating Pill 1: 1800+ SKUs */}
               <div className="floating-pill floating-pill-top animate-float-slow absolute -top-5 -right-3 sm:-right-6 rounded-2xl border border-white/30 bg-white/95 p-3.5 text-slate-900 shadow-xl backdrop-blur-md will-change-transform">
                 <div className="flex items-center gap-3">
                   <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-100 text-emerald-800">
@@ -751,7 +301,6 @@ export default function Landing() {
                 </div>
               </div>
 
-              {/* Floating Pill 2: Live Dispatch Ticket */}
               <div className="floating-pill floating-pill-bottom animate-float-reverse absolute -bottom-6 -left-3 sm:-left-6 max-w-xs rounded-2xl border border-white/30 bg-white/95 p-4 text-slate-900 shadow-2xl backdrop-blur-md will-change-transform">
                 <div className="flex items-center justify-between gap-4 text-xs">
                   <div className="flex items-center gap-1.5 font-bold text-emerald-700">
@@ -773,71 +322,32 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ----------------------------------------------------
-          4. STATS METRICS BAR (Mirroring Mercora Stats Strip)
-      ---------------------------------------------------- */}
+      {/* STATS BAR */}
       <section className="relative z-10 -mt-10 mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid grid-cols-2 gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-xl sm:grid-cols-4 sm:p-8">
-          <div className="border-r border-slate-100 pr-4 last:border-0 sm:pr-6">
-            <span
-              data-counter="500"
-              data-suffix="+"
-              className="font-display text-3xl font-extrabold text-[#287A74] sm:text-4xl"
-            >
-              500+
-            </span>
-            <span className="mt-1 block text-xs font-semibold text-slate-500 sm:text-sm">
-              Hotels, Offices & Sites
-            </span>
-          </div>
-
-          <div className="border-r-0 border-slate-100 pr-0 sm:border-r sm:pr-6">
-            <span
-              data-counter="24"
-              data-suffix="h"
-              className="font-display text-3xl font-extrabold text-amber-500 sm:text-4xl"
-            >
-              24h
-            </span>
-            <span className="mt-1 block text-xs font-semibold text-slate-500 sm:text-sm">
-              Standard Dispatch Cycle
-            </span>
-          </div>
-
-          <div className="border-r border-slate-100 pr-4 sm:pr-6">
-            <span
-              data-counter="100"
-              data-suffix="%"
-              className="font-display text-3xl font-extrabold text-emerald-600 sm:text-4xl"
-            >
-              100%
-            </span>
-            <span className="mt-1 block text-xs font-semibold text-slate-500 sm:text-sm">
-              Quality Inspection Pass
-            </span>
-          </div>
-
-          <div>
-            <span
-              data-counter="15"
-              data-suffix="m"
-              className="font-display text-3xl font-extrabold text-[#287A74] sm:text-4xl"
-            >
-              15m
-            </span>
-            <span className="mt-1 block text-xs font-semibold text-slate-500 sm:text-sm">
-              Average Quote Response
-            </span>
-          </div>
+          {[
+            { counter: 500, suffix: "+", color: "text-[#287A74]", label: "Hotels, Offices & Sites" },
+            { counter: 24, suffix: "h", color: "text-amber-500", label: "Standard Dispatch Cycle" },
+            { counter: 100, suffix: "%", color: "text-emerald-600", label: "Quality Inspection Pass" },
+            { counter: 15, suffix: "m", color: "text-[#287A74]", label: "Average Quote Response" },
+          ].map((stat, i) => (
+            <div key={stat.label} className={`${i < 3 ? "border-r border-slate-100 pr-4 sm:pr-6" : ""}`}>
+              <span
+                data-counter={stat.counter}
+                data-suffix={stat.suffix}
+                className={`font-display text-3xl font-extrabold ${stat.color} sm:text-4xl`}
+              >
+                {stat.counter}{stat.suffix}
+              </span>
+              <span className="mt-1 block text-xs font-semibold text-slate-500 sm:text-sm">{stat.label}</span>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ----------------------------------------------------
-          5. FEATURED CATEGORIES SHOWCASE & COMMODITY MATRIX
-      ---------------------------------------------------- */}
-      <section className="section-reveal py-20 lg:py-28 bg-gradient-to-b from-slate-50 via-white to-slate-50">
+      {/* CATEGORIES */}
+      <section className="py-20 lg:py-28 bg-gradient-to-b from-slate-50 via-white to-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 rounded-full bg-[#287A74]/10 px-4 py-1.5 text-xs font-bold text-[#287A74]">
               <Sparkles size={14} className="text-emerald-600" />
@@ -851,7 +361,6 @@ export default function Landing() {
             </p>
           </div>
 
-          {/* High-Visibility Category Showcase Grid */}
           <div className="categories-container mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {CATEGORIES.map((cat) => {
               const IconComp = cat.icon;
@@ -861,23 +370,14 @@ export default function Landing() {
                   href={`/catalog?category=${cat.id}`}
                   className="category-card group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-7 sm:p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#287A74] hover:shadow-2xl hover:shadow-[#287A74]/15 will-change-transform"
                 >
-                  {/* Decorative ambient gradient backdrop on hover */}
-                  <div
-                    className={`absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br ${cat.accentGradient || "from-[#287A74]/10 to-transparent"} blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`}
-                  />
-
-                  {/* Top colored accent indicator line */}
+                  <div className={`absolute -right-16 -top-16 h-48 w-48 rounded-full bg-gradient-to-br ${cat.accentGradient || "from-[#287A74]/10 to-transparent"} blur-2xl opacity-60 transition-opacity duration-300 group-hover:opacity-100 pointer-events-none`} />
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#287A74]/30 to-transparent transition-all duration-300 group-hover:h-2 group-hover:via-[#287A74]" />
 
                   <div>
-                    {/* Top Row: Icon and Badges */}
                     <div className="flex items-start justify-between gap-3">
-                      <div
-                        className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.iconBg || "bg-[#287A74] text-white"} shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}
-                      >
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${cat.iconBg || "bg-[#287A74] text-white"} shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
                         <IconComp size={26} />
                       </div>
-
                       <div className="flex flex-col items-end gap-1.5">
                         <span className="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-extrabold text-slate-700 transition-colors group-hover:bg-[#287A74]/10 group-hover:text-[#287A74]">
                           {cat.count}
@@ -890,23 +390,18 @@ export default function Landing() {
                       </div>
                     </div>
 
-                    {/* Category Title & Description */}
                     <div className="mt-5">
                       <h3 className="font-display text-xl sm:text-2xl font-extrabold text-slate-900 group-hover:text-[#287A74] transition-colors leading-snug">
                         {cat.title}
                       </h3>
-                      <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-                        {cat.description}
-                      </p>
+                      <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">{cat.description}</p>
                     </div>
 
-                    {/* Operational Perk Banner */}
                     <div className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 px-3.5 py-2 text-xs font-semibold text-slate-700 border border-slate-100">
                       <CheckCircle2 size={15} className="shrink-0 text-emerald-600" />
                       <span className="truncate">{cat.perk}</span>
                     </div>
 
-                    {/* Popular Commercial Stock Chips */}
                     <div className="mt-4 pt-3 border-t border-slate-100">
                       <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
                         Institutional Staples:
@@ -924,7 +419,6 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  {/* Interactive Explore Click Indicator Footer */}
                   <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="relative flex h-2.5 w-2.5">
@@ -935,7 +429,6 @@ export default function Landing() {
                         Explore by clicking here
                       </span>
                     </div>
-
                     <div className="inline-flex items-center gap-1.5 rounded-xl bg-slate-100 group-hover:bg-[#287A74] px-3.5 py-2 text-xs font-extrabold text-slate-700 group-hover:text-white transition-all duration-300 shadow-sm">
                       <span>View Products</span>
                       <ArrowRight size={14} className="transition-transform duration-300 group-hover:translate-x-1.5" />
@@ -946,7 +439,7 @@ export default function Landing() {
             })}
           </div>
 
-          {/* Commercial Bridge Banner: Prompting Full Wholesale Catalog */}
+          {/* Full Catalog Banner */}
           <div className="mt-14 overflow-hidden rounded-3xl border border-slate-200 bg-gradient-to-br from-[#071a19] via-[#0d2a28] to-[#133c39] p-8 sm:p-12 text-white shadow-xl relative">
             <div className="absolute right-0 top-0 -mt-10 -mr-10 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -962,7 +455,6 @@ export default function Landing() {
                   Browse our full inventory of fresh eggs (mayai), fresh vegetables, chilled fruits, soft drinks, bulk grains, and commercial cooking oils. Adjust pack quantities, download customized PDF/Excel RFQs, or send directly to WhatsApp.
                 </p>
               </div>
-
               <div className="flex flex-col sm:flex-row gap-3 shrink-0 w-full md:w-auto">
                 <Link
                   href="/catalog"
@@ -972,1342 +464,90 @@ export default function Landing() {
                   <span>Open Full Wholesale Catalog</span>
                   <ArrowRight size={16} />
                 </Link>
-                <a
-                  href="#quote-section"
+                <Link
+                  href="/quote"
                   className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm transition hover:bg-white/20"
                 >
                   <MessageSquare size={16} />
                   <span>Request Custom Supply Plan</span>
-                </a>
+                </Link>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------
-          7. SECTORS WE SERVE (Hotels, Offices, Construction, Catering)
-      ---------------------------------------------------- */}
-      <section id="sectors" className="section-reveal py-20 bg-slate-100/70">
+      {/* SECTION NAVIGATION CARDS */}
+      <section className="py-16 bg-slate-100/70 border-t border-slate-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-              Targeted Logistics Solutions
-            </span>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-              Engineered for the Demands of Your Specific Sector
+          <div className="text-center mb-10">
+            <h2 className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
+              Explore More About MH Suppliers
             </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600 text-sm sm:text-base">
-              A luxury hotel has completely different receiving windows than an active high-rise construction
-              site. Here is how we customize our supply chain for you.
+            <p className="mt-2 text-slate-600 text-sm">
+              Everything you need to know, organized by topic.
             </p>
           </div>
-
-          {/* Sector Navigation Tabs */}
-          <div className="mt-12 flex justify-center">
-            <div className="inline-flex flex-wrap rounded-2xl bg-white p-1.5 shadow-sm border border-slate-200">
-              {SECTORS.map((sec, idx) => (
-                <button
-                  key={sec.id}
-                  onClick={() => setSelectedSectorTab(idx)}
-                  className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs sm:text-sm font-bold transition ${selectedSectorTab === idx
-                    ? "bg-[#287A74] text-white shadow-md"
-                    : "text-slate-600 hover:text-slate-900"
-                    }`}
-                >
-                  <sec.icon size={18} />
-                  <span>{sec.title}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Active Sector Display Card */}
-          <div className="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
-            <div className="grid lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="p-8 sm:p-12 space-y-6">
-                <div className="inline-flex items-center gap-2 rounded-full bg-[#287A74]/10 px-3.5 py-1 text-xs font-bold text-[#287A74]">
-                  <CheckCircle2 size={14} className="text-emerald-600" />
-                  <span>{SECTORS[selectedSectorTab].tagline}</span>
-                </div>
-
-                <h3 className="font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
-                  Bespoke Procurement for {SECTORS[selectedSectorTab].title}
-                </h3>
-
-                <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
-                  {SECTORS[selectedSectorTab].description}
-                </p>
-
-                <div className="space-y-3 pt-2">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                    SLA & Operational Highlights:
-                  </h4>
-                  <ul className="grid gap-2.5 sm:grid-cols-2">
-                    {SECTORS[selectedSectorTab].perks.map((perk) => (
-                      <li key={perk} className="flex items-start gap-2 text-xs font-semibold text-slate-700">
-                        <CheckCircle2 size={16} className="shrink-0 text-emerald-600 mt-0.5" />
-                        <span>{perk}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="pt-4 flex flex-wrap items-center gap-4">
-                  <a
-                    href="#quote-section"
-                    onClick={() => setRfqSector(SECTORS[selectedSectorTab].id)}
-                    className="rounded-xl bg-[#287A74] px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-[#328e87] transition"
-                  >
-                    Set Up Supply for {SECTORS[selectedSectorTab].title}
-                  </a>
-                  <a
-                    href="tel:+255779973333"
-                    className="flex items-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-xs font-bold text-slate-700 hover:bg-slate-50 transition"
-                  >
-                    <Phone size={14} className="text-[#287A74]" /> Specialist: 0779 973 333
-                  </a>
-                  <a
-                    href="https://wa.me/255776147097"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-xl border border-emerald-300 bg-emerald-50 px-5 py-3 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
-                  >
-                    <MessageSquare size={14} className="text-emerald-600" /> WhatsApp: 0776 147 097
-                  </a>
-                </div>
-              </div>
-
-              {/* Side Card: Popular Items for this sector */}
-              <div className="border-t border-slate-100 bg-slate-50 p-8 sm:p-12 lg:border-t-0 lg:border-l">
-                <h4 className="font-display text-sm font-bold uppercase tracking-wider text-slate-500">
-                  Top Ordered Commodities
-                </h4>
-                <div className="mt-4 space-y-3">
-                  {SECTORS[selectedSectorTab].popularItems.map((item) => (
-                    <div
-                      key={item}
-                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-white p-3.5 text-xs shadow-sm"
-                    >
-                      <div className="flex items-center gap-2 font-bold text-slate-800">
-                        <span className="grid h-6 w-6 place-items-center rounded-lg bg-[#287A74]/10 text-[#287A74]">
-                          ✓
-                        </span>
-                        <span>{item}</span>
-                      </div>
-                      <span className="text-[11px] font-semibold text-emerald-700">Daily Restock</span>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 rounded-2xl bg-gradient-to-br from-[#287A74] to-[#1a5a55] p-5 text-white">
-                  <div className="flex items-center gap-2 text-xs font-bold text-amber-300">
-                    <ShieldCheck size={16} /> Dedicated Account Manager
-                  </div>
-                  <p className="mt-1 text-xs text-slate-200">
-                    All regular commercial accounts receive a single point of contact available 24/7 on WhatsApp.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          8. HOW IT WORKS (Three-Step Pill Flow from full.webp)
-      ---------------------------------------------------- */}
-      <section id="how-it-works" className="section-reveal py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-              Frictionless B2B Process
-            </span>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-              From Requisition to Dock in Three Clear Steps
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-slate-600 text-sm sm:text-base">
-              No endless phone tag, no mysterious substitutions. Transparent pricing and rapid dispatch.
-            </p>
-          </div>
-
-          {/* Interactive Delivery Road Track */}
-          <div className="relative mt-16">
-            {/* Desktop Animated Route Line & Traveling Cold-Chain Delivery Van */}
-            <div className="hidden md:block absolute top-[52px] left-[15%] right-[15%] z-0 pointer-events-none">
-              {/* Route Roadway Track */}
-              <div className="h-2 w-full rounded-full bg-slate-200/90 overflow-hidden relative shadow-inner">
-                {/* Active Progress Fill that draws on scroll */}
-                <div
-                  ref={processTrackRef}
-                  className="h-full w-full origin-left bg-gradient-to-r from-[#287A74] via-amber-400 to-emerald-500 rounded-full"
-                  style={{ transform: "scaleX(0)" }}
-                />
-              </div>
-
-              {/* Real-time Animated Van Indicator riding along the route track */}
-              <div
-                ref={processVanRef}
-                className="absolute -top-3.5 left-0 -translate-x-1/2 flex items-center gap-1.5 rounded-full bg-[#287A74] px-3 py-1 text-[11px] font-bold text-white shadow-xl shadow-[#071a19]/35 border border-white/60 will-change-transform z-10"
-                style={{ left: "0%" }}
-              >
-                <Truck size={14} className="text-amber-400" />
-                <span className="hidden lg:inline text-[9px] uppercase tracking-wider font-extrabold text-white">Cold Transit</span>
-              </div>
-            </div>
-
-            <div className="grid gap-8 md:grid-cols-3 relative z-10">
-              {[
-                {
-                  step: "01.",
-                  title: "Send Your List or Select Items",
-                  desc: "Choose from our live catalog, upload your Excel purchasing requisition, or send your requirements via WhatsApp.",
-                  icon: FileSpreadsheet,
-                  badge: "Any Format Accepted",
-                },
-                {
-                  step: "02.",
-                  title: "Receive Transparent Itemized Quote",
-                  desc: "Within 15 minutes, receive verified pricing, confirmed stock status, batch delivery date, and volume tiered discounts.",
-                  icon: Clock,
-                  badge: "Avg. 15 Min Turnaround",
-                },
-                {
-                  step: "03.",
-                  title: "Dawn Temperature-Controlled Delivery",
-                  desc: "Our refrigerated fleet delivers right to your hotel kitchen, office pantry, or site loading dock with signed electronic POD.",
-                  icon: Truck,
-                  badge: "05:30 AM Guaranteed",
-                },
-              ].map((st) => (
-                <div
-                  key={st.step}
-                  className="process-card group relative flex flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50/90 backdrop-blur-sm p-8 transition duration-300 hover:-translate-y-2 hover:border-[#287A74] hover:bg-white hover:shadow-xl will-change-transform"
-                >
-                  <div>
-                    <div className="flex items-center justify-between">
-                      <span className="font-display text-4xl font-extrabold text-[#287A74] transition group-hover:scale-105">
-                        {st.step}
-                      </span>
-                      <span className="rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-bold text-emerald-800">
-                        {st.badge}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-6 font-display text-xl font-bold text-slate-900">{st.title}</h3>
-                    <p className="mt-2 text-sm leading-relaxed text-slate-600">{st.desc}</p>
-                  </div>
-
-                  <div className="mt-8 pt-4 border-t border-slate-200/60 flex items-center gap-2 text-xs font-bold text-[#287A74]">
-                    <st.icon size={16} />
-                    <span>Step {st.step.replace(".", "")} Verified by MH Dispatch</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          9. SMART PROCUREMENT ESTIMATOR (AI Assistant inspired by full.webp)
-      ---------------------------------------------------- */}
-      <section id="smart-assistant" className="section-reveal py-20 bg-slate-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-300">
-                <Sparkles size={14} />
-                <span>Smart Procurement Estimator</span>
-              </div>
-
-              <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-                Ready-Made Supply Blueprints for Every Operation
-              </h2>
-
-              <p className="text-slate-300 text-base leading-relaxed">
-                Not sure what quantities your facility needs? Choose a pre-calibrated commercial bundle to
-                preview typical weekly volume, or load it straight into your quotation with one click.
-              </p>
-
-              <div className="space-y-3 pt-2">
-                {SMART_PRESETS.map((preset) => (
-                  <button
-                    key={preset.title}
-                    onClick={() => applyPreset(preset)}
-                    className="w-full text-left rounded-2xl border border-white/10 bg-white/5 p-4 transition duration-200 hover:border-amber-400 hover:bg-white/10 group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-display text-sm font-bold text-white group-hover:text-amber-300">
-                        {preset.title}
-                      </h4>
-                      <span className="flex items-center gap-1 text-xs font-semibold text-amber-400">
-                        <span>Load Bundle</span>
-                        <ArrowRight size={14} className="transition group-hover:translate-x-1" />
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-slate-400">{preset.note}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Visual Box: Cold Chain Warehouse & Fleet Showcase */}
-            <div className="relative overflow-hidden rounded-3xl border border-white/20 bg-gradient-to-br from-slate-800 to-slate-950 p-6 shadow-2xl">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
-                <Image
-                  src="/images/fleet.jpg"
-                  alt="MH General Suppliers Refrigerated Cold-Chain Fleet"
-                  fill
-                  className="fleet-image-inner object-cover will-change-transform scale-105"
-                />
-              </div>
-
-              <div className="mt-6 space-y-4">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="font-bold text-amber-400">MH Logistics Center • Central Dock</span>
-                  <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 font-bold text-emerald-300">
-                    Fleet Live
-                  </span>
-                </div>
-                <h4 className="font-display text-lg font-bold text-white">
-                  Multi-Temperature Fleet Delivering Daily
-                </h4>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Dual-zone refrigerated vans ensure fresh vegetables and ripe fruits remain between 3°C - 5°C,
-                  while wholesale dry commodities, cooking oils, and beverage cartons are stowed safely in secure
-                  bulk cargo sections.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          10. QUALITY, OPERATIONS & LOGISTICS ASSURANCE
-      ---------------------------------------------------- */}
-      <section id="logistics" className="section-reveal py-20 bg-white">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="grid items-center gap-12 lg:grid-cols-2">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-slate-200 shadow-xl">
-              <Image
-                src="/images/groceries.jpg"
-                alt="Bulk Oils, Rice, and Groceries Warehouse"
-                fill
-                className="groceries-image-inner object-cover will-change-transform scale-105"
-              />
-            </div>
-
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-[#287A74]">
-                <ShieldCheck size={16} className="text-emerald-600" />
-                <span>Zero Compromise Procurement</span>
-              </div>
-
-              <h2 className="font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-                Why Procurement Officers & Executive Chefs Trust MH
-              </h2>
-
-              <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-                When a hotel restaurant is serving 300 breakfast covers or a construction camp has hungry shifts
-                waiting, late deliveries or rotten produce can disrupt your entire business.
-              </p>
-
-              <div className="assurance-grid grid gap-4 sm:grid-cols-2 pt-2">
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
-                  <Flame size={20} className="text-amber-500" />
-                  <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
-                    Direct Farm Sourcing
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-600">
-                    Skip middlemen markets. We partner directly with vetted growers for peak freshness and stable
-                    wholesale prices.
-                  </p>
-                </div>
-
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
-                  <RefreshCw size={20} className="text-emerald-600" />
-                  <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
-                    Instant Replacement Policy
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-600">
-                    Any crate that fails your receiving chef or manager inspection is replaced immediately on our
-                    next route run.
-                  </p>
-                </div>
-
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
-                  <Calendar size={20} className="text-[#287A74]" />
-                  <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
-                    Automated Standing Orders
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-600">
-                    Never run out of cooking oil, mineral water, or onions. Schedule weekly deliveries that run
-                    seamlessly on autopilot.
-                  </p>
-                </div>
-
-                <div className="assurance-card rounded-2xl border border-slate-200 bg-slate-50 p-4 transition duration-300 hover:-translate-y-1 hover:border-[#287A74] hover:shadow-md will-change-transform">
-                  <FileSpreadsheet size={20} className="text-purple-600" />
-                  <h4 className="mt-2 font-display text-sm font-bold text-slate-900">
-                    Clear Digital Invoicing
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-600">
-                    Detailed line items matching your internal PO numbers with signed delivery notes and VAT
-                    receipts.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          10B. ZANZIBAR ARCHIPELAGO DELIVERY CORRIDORS
-      ---------------------------------------------------- */}
-      <section id="zanzibar-routes" className="section-reveal relative overflow-hidden py-20 bg-gradient-to-b from-white via-[#0b2524]/5 to-slate-50 border-t border-slate-200">
-        {/* Zanzibar East Shore Aerial Water Texture */}
-        <div className="pointer-events-none absolute inset-0 opacity-15 mix-blend-multiply">
-          <Image
-            src="/images/zanzibar-east-shore.jpg"
-            alt=""
-            fill
-            className="object-cover object-center"
-          />
-        </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
-          <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#0d9488]/30 bg-[#0d9488]/10 px-4 py-1.5 text-xs font-bold text-[#0b4f48]">
-              <Sparkles size={14} className="text-[#0d9488]" />
-              <span className="tracking-wide uppercase">🌴 Karibu Zanzibar • Visiwani Cold-Chain Express</span>
-            </div>
-            <h2 className="mt-3 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl lg:text-5xl tracking-tight">
-              Island-Wide Logistics Across Unguja &amp; Pemba
-            </h2>
-            <p className="mt-4 text-slate-600 text-sm sm:text-base leading-relaxed">
-              From the historic docks of Stone Town to the white sandy shorelines of Nungwi and Jambiani, our multi-temperature fleet powers daily resort kitchens, restaurants, villas, and construction camps across Zanzibar.
-            </p>
-          </div>
-
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Corridor 1: North Shore */}
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-amber-400 to-emerald-500" />
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">🏖️</span>
-                  <span className="rounded-full bg-amber-50 border border-amber-200/60 px-2.5 py-0.5 text-[10px] font-bold text-amber-800">
-                    05:00 AM Dawn Drop
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
-                  North Shore Resort Route
-                </h3>
-                <span className="text-xs font-semibold text-[#0d9488]">Nungwi &amp; Kendwa Beach</span>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                  Daily priority delivery to 5-star beachfront resorts, ocean villas, and executive kitchens before breakfast buffet preparations begin.
-                </p>
-                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
-                  <p><strong className="text-slate-700">Top Freight:</strong> Mayai ya Kisasa, Salad Greens, Ripe Pineapples, Cooking Oils.</p>
-                  <p><strong className="text-slate-700">Key Hubs:</strong> Kendwa Rocks, Nungwi Bay, Matemwe.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Corridor 2: Stone Town & Central */}
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-[#287A74] to-cyan-500" />
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">🏛️</span>
-                  <span className="rounded-full bg-emerald-50 border border-emerald-200/60 px-2.5 py-0.5 text-[10px] font-bold text-emerald-800">
-                    15m Rapid Dispatch
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
-                  Stone Town &amp; Urban Hub
-                </h3>
-                <span className="text-xs font-semibold text-[#0d9488]">Port, Malindi &amp; Fumba</span>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                  Multiple intra-day supply runs for heritage boutique hotels, government pantries, corporate offices, maritime provisioning, and Fumba Town.
-                </p>
-                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
-                  <p><strong className="text-slate-700">Top Freight:</strong> Basmati Rice, Cured Onions, Drinking Water, Restroom Tissues.</p>
-                  <p><strong className="text-slate-700">Key Hubs:</strong> Forodhani, Malindi Port, Chukwani, Fumba.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Corridor 3: East & South Coast */}
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-teal-400 to-amber-500" />
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">🏄‍♂️</span>
-                  <span className="rounded-full bg-teal-50 border border-teal-200/60 px-2.5 py-0.5 text-[10px] font-bold text-teal-800">
-                    Daily 06:30 AM Route
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
-                  East &amp; South Coast Route
-                </h3>
-                <span className="text-xs font-semibold text-[#0d9488]">Paje, Jambiani &amp; Kiwengwa</span>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                  Refrigerated transit catering to eco-lodges, kitesurfing camps, boutique villas, and seafood grill houses along the turquoise coast.
-                </p>
-                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
-                  <p><strong className="text-slate-700">Top Freight:</strong> Mayai ya Kienyeji, Tropical Melons, Soft Drinks, Bakery Flour.</p>
-                  <p><strong className="text-slate-700">Key Hubs:</strong> Kiwengwa, Paje Strip, Jambiani, Kizimkazi.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Corridor 4: Pemba Island */}
-            <div className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-slate-200/90 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:border-[#0d9488] hover:shadow-xl">
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-blue-500 to-emerald-400" />
-              <div>
-                <div className="flex items-center justify-between">
-                  <span className="text-2xl">⛵</span>
-                  <span className="rounded-full bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 text-[10px] font-bold text-blue-800">
-                    Scheduled Maritime
-                  </span>
-                </div>
-                <h3 className="mt-4 font-display text-lg font-bold text-slate-900 group-hover:text-[#0b4f48]">
-                  Pemba Island Maritime Link
-                </h3>
-                <span className="text-xs font-semibold text-[#0d9488]">Chake Chake, Wete &amp; Mkoani</span>
-                <p className="mt-3 text-xs leading-relaxed text-slate-600">
-                  Scheduled ferry container crates and consolidated institutional consignments to Pemba Island lodges, diving resorts, and camps.
-                </p>
-                <div className="mt-4 border-t border-slate-100 pt-3 text-[11px] text-slate-500 space-y-1">
-                  <p><strong className="text-slate-700">Top Freight:</strong> Heavy Dry Goods, 20L Cooking Oil Cans, Wholesale Water.</p>
-                  <p><strong className="text-slate-700">Key Hubs:</strong> Chake Chake Port, Wete, Mkoani.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Route Contact Banner */}
-          <div className="mt-10 flex flex-col items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-[#0b2524] to-[#1a5a55] p-6 text-white sm:flex-row sm:px-8">
-            <div className="flex items-center gap-3">
-              <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-amber-400 text-slate-950 font-bold">
-                <Truck size={20} />
-              </div>
-              <div>
-                <span className="text-xs font-bold text-amber-300 uppercase tracking-wider">
-                  Zanzibar Fleet Dispatch Desk
-                </span>
-                <p className="text-xs text-slate-200 sm:text-sm">
-                  Need a standing delivery window for your hotel, villa or construction site?
-                </p>
-              </div>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-3">
-              <a
-                href="tel:+255779973333"
-                className="flex items-center gap-1.5 rounded-xl bg-amber-500 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-amber-400 transition"
-              >
-                <Phone size={13} />
-                <span>Call 0779 973 333</span>
-              </a>
-              <a
-                href="https://wa.me/255776147097"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 rounded-xl border border-emerald-400/50 bg-emerald-600/30 px-4 py-2 text-xs font-bold text-emerald-200 hover:bg-emerald-600/50 hover:text-white transition"
-              >
-                <MessageSquare size={13} className="text-emerald-400" />
-                <span>WhatsApp 0776 147 097</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          11. CLIENT TESTIMONIALS
-      ---------------------------------------------------- */}
-      <section className="section-reveal py-20 bg-slate-50 border-t border-slate-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-              Operational Proof
-            </span>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-              Trusted by Procurement Managers Across Zanzibar
-            </h2>
-          </div>
-
-          <div className="testimonials-grid mt-12 grid gap-6 md:grid-cols-3">
+          <div className="nav-cards-grid grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
-                quote:
-                  "MH General Suppliers completely transformed our morning kitchen prep. 25 crates of farm-fresh Mayai ya Kisasa and chef produce arrive at 5:15 AM sharp with tomatoes and greens at uniform ripeness. Their cooking oil pricing is unmatched in Zanzibar.",
-                author: "Chef David M.",
-                role: "Executive Head Chef",
-                sector: "5-Star Kendwa Beachfront Resort, Zanzibar",
+                href: "/sectors",
+                emoji: "🏨",
+                title: "Sectors We Serve",
+                desc: "Hotels, resorts, construction sites, corporate offices — see your bespoke supply solution.",
+                cta: "View Sectors",
+                color: "hover:border-[#287A74]",
               },
               {
-                quote:
-                  "Managing breakroom drinks and weekly fresh fruit for 140 staff used to consume 6 hours every Monday. MH delivers the full order across Stone Town in one shot with clean consolidated monthly invoicing.",
-                author: "Sarah K.",
-                role: "Head of Workplace Operations",
-                sector: "Fumba Town Commercial Campus, Zanzibar",
+                href: "/how-it-works",
+                emoji: "🚚",
+                title: "How It Works",
+                desc: "Three simple steps from your order to cold-chain dock delivery at 5:30 AM.",
+                cta: "Learn Process",
+                color: "hover:border-amber-400",
               },
               {
-                quote:
-                  "Our construction project has 220 workers on site in North Unguja. MH supplies 50kg sacks of rice, beans, cooking oil, and pallets of bottled water without fail, even through the coastal rains.",
-                author: "Eng. Joseph T.",
-                role: "Site Operations Director",
-                sector: "Nungwi Coastal Infrastructure Project, Zanzibar",
+                href: "/routes",
+                emoji: "🗺️",
+                title: "Island Routes",
+                desc: "Daily delivery corridors across Zanzibar — Nungwi, Paje, Stone Town, Pemba.",
+                cta: "See Routes",
+                color: "hover:border-teal-500",
               },
-            ].map((t) => (
-              <div
-                key={t.author}
-                className="testimonial-card flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-8 shadow-sm transition duration-300 hover:shadow-xl hover:-translate-y-1.5 will-change-transform"
+              {
+                href: "/quote",
+                emoji: "📋",
+                title: "FAQ & Get a Quote",
+                desc: "Get answers to common questions and submit your wholesale quotation request.",
+                cta: "Request Quote",
+                color: "hover:border-emerald-500",
+              },
+            ].map((card) => (
+              <Link
+                key={card.href}
+                href={card.href}
+                className={`nav-card group flex flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-lg ${card.color}`}
               >
-                <p className="text-sm leading-relaxed text-slate-700 italic">“{t.quote}”</p>
-                <div className="mt-6 pt-4 border-t border-slate-100">
-                  <span className="font-display text-base font-bold text-slate-900 block">{t.author}</span>
-                  <span className="text-xs font-semibold text-[#287A74] block">{t.role}</span>
-                  <span className="text-xs text-slate-400 block">{t.sector}</span>
+                <div>
+                  <span className="text-3xl">{card.emoji}</span>
+                  <h3 className="mt-3 font-display text-lg font-bold text-slate-900 group-hover:text-[#287A74] transition-colors">
+                    {card.title}
+                  </h3>
+                  <p className="mt-2 text-xs text-slate-600 leading-relaxed">{card.desc}</p>
                 </div>
-              </div>
+                <div className="mt-5 inline-flex items-center gap-1.5 text-xs font-bold text-[#287A74]">
+                  <span>{card.cta}</span>
+                  <ArrowRight size={14} className="transition-transform group-hover:translate-x-1" />
+                </div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ----------------------------------------------------
-          12. INTERACTIVE RFQ / QUOTE BUILDER SECTION
-      ---------------------------------------------------- */}
-      <section id="quote-section" className="section-reveal py-20 bg-[#0b2524] text-white relative overflow-hidden">
-        {/* Ambient Glow Spotlight */}
-        <div className="quote-ambient-glow pointer-events-none absolute -top-48 -right-48 h-[600px] w-[600px] rounded-full bg-[#287A74]/15 blur-[120px] will-change-transform" />
-        <div className="quote-ambient-glow pointer-events-none absolute -bottom-48 -left-48 h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[120px] will-change-transform" />
+      <SiteFooter />
 
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
-          <div className="grid gap-12 lg:grid-cols-2 items-center">
-            {/* Left Column: Value Proposition & Direct Contact */}
-            <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-500/10 px-4 py-1.5 text-xs font-bold text-amber-300">
-                <Sparkles size={14} />
-                <span>Fast B2B Response</span>
-              </div>
-
-              <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl lg:text-5xl">
-                Request an Itemized Wholesale Quotation
-              </h2>
-
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed">
-                Tell us your expected quantities, delivery location, and schedule. Our commercial account desk
-                will return an itemized quote with volume pricing within 15 minutes during business hours.
-              </p>
-
-              <div className="space-y-4 pt-4 text-sm">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-amber-400">
-                    <Phone size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-xs text-slate-400">Primary Procurement Desk</span>
-                    <a href="tel:+255779973333" className="font-bold text-white hover:text-amber-300">
-                      0779 973 333 / +255 779 973 333
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-500/20 text-emerald-400">
-                    <MessageSquare size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-xs text-slate-400">Logistics & WhatsApp Support Hotline</span>
-                    <a
-                      href="https://wa.me/255776147097"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-bold text-emerald-300 hover:text-white"
-                    >
-                      0776 147 097 / +255 776 147 097
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-amber-400">
-                    <Mail size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-xs text-slate-400">Official RFQ Inquiries</span>
-                    <a
-                      href="mailto:quotes@mhsuppliers.co.tz"
-                      className="font-bold text-white hover:text-amber-300"
-                    >
-                      quotes@mhsuppliers.co.tz
-                    </a>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-white/10 text-amber-400">
-                    <MapPin size={18} />
-                  </div>
-                  <div>
-                    <span className="block text-xs text-slate-400">Logistics & Distribution Center</span>
-                    <span className="font-bold text-white">Central Wholesale Terminal & Malindi Port, Stone Town, Zanzibar</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right Column: Interactive Quotation Form */}
-            <div className="rounded-3xl border border-white/15 bg-white p-8 text-slate-900 shadow-2xl">
-              {isSubmitted ? (
-                <div className="py-12 text-center space-y-4">
-                  <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-emerald-100 text-emerald-600">
-                    <CheckCircle2 size={36} />
-                  </div>
-                  <h3 className="font-display text-2xl font-extrabold text-slate-900">
-                    Quotation Request Received!
-                  </h3>
-                  <p className="text-xs font-mono font-bold text-[#287A74] bg-[#287A74]/10 py-1.5 px-3 rounded-lg inline-block">
-                    Reference ID: {rfqReference}
-                  </p>
-                  <p className="text-sm text-slate-600 max-w-md mx-auto">
-                    Thank you, <strong className="text-slate-900">{rfqName}</strong>. Our commercial team is
-                    generating your itemized price breakdown for{" "}
-                    <strong className="text-slate-900">{rfqCompany || "your facility"}</strong>. A confirmation
-                    has been logged and we will contact you at <strong>{rfqContact}</strong>.
-                  </p>
-                  <button
-                    onClick={() => {
-                      setIsSubmitted(false);
-                      setCart({});
-                    }}
-                    className="mt-6 rounded-xl bg-[#287A74] px-6 py-2.5 text-xs font-bold text-white hover:bg-[#328e87] transition"
-                  >
-                    Submit Another Inquiry
-                  </button>
-                </div>
-              ) : (
-                <form onSubmit={handleRfqSubmit} className="space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h3 className="font-display text-lg font-bold text-slate-900">Commercial RFQ Form</h3>
-                    <span className="text-xs font-semibold text-emerald-600">⚡ 15-Minute Response</span>
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="rfq-name" className="mb-1 block text-xs font-bold text-slate-700">
-                        Full Name *
-                      </label>
-                      <input
-                        id="rfq-name"
-                        type="text"
-                        required
-                        placeholder="e.g. Michael Temba"
-                        value={rfqName}
-                        onChange={(e) => setRfqName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="rfq-company" className="mb-1 block text-xs font-bold text-slate-700">
-                        Company or Facility Name *
-                      </label>
-                      <input
-                        id="rfq-company"
-                        type="text"
-                        required
-                        placeholder="e.g. Serena Hotel or Alpha Site"
-                        value={rfqCompany}
-                        onChange={(e) => setRfqCompany(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <div>
-                      <label htmlFor="rfq-contact" className="mb-1 block text-xs font-bold text-slate-700">
-                        Phone Number or Email *
-                      </label>
-                      <input
-                        id="rfq-contact"
-                        type="text"
-                        required
-                        placeholder="e.g. 0779 973 333 or buyer@resort.co.tz"
-                        value={rfqContact}
-                        onChange={(e) => setRfqContact(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="rfq-sector" className="mb-1 block text-xs font-bold text-slate-700">
-                        Target Industry / Sector
-                      </label>
-                      <select
-                        id="rfq-sector"
-                        value={rfqSector}
-                        onChange={(e) => setRfqSector(e.target.value)}
-                        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#287A74] focus:bg-white"
-                      >
-                        <option value="hotels">Hotel, Resort or Safari Lodge</option>
-                        <option value="offices">Corporate Office / Campus</option>
-                        <option value="construction">Construction Site / Industrial Camp</option>
-                        <option value="catering">Restaurant or Commercial Catering</option>
-                        <option value="other">Institutional / School / Hospital</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="rfq-frequency" className="mb-1 block text-xs font-bold text-slate-700">
-                      Delivery Frequency Required
-                    </label>
-                    <select
-                      id="rfq-frequency"
-                      value={rfqFrequency}
-                      onChange={(e) => setRfqFrequency(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-xs font-semibold text-slate-800 outline-none focus:border-[#287A74] focus:bg-white"
-                    >
-                      <option value="Daily Early Morning (5:30 AM)">Daily Early Morning (5:30 AM)</option>
-                      <option value="Weekly Standing Order">Weekly Standing Order</option>
-                      <option value="Bi-Weekly Restock">Bi-Weekly Restock</option>
-                      <option value="One-Time Bulk Purchase Order">One-Time Bulk Purchase Order</option>
-                    </select>
-                  </div>
-
-                  {/* Cart Summary if items added */}
-                  {totalCartCount > 0 && (
-                    <div className="rounded-xl border border-[#287A74]/20 bg-[#287A74]/10 p-3 text-xs">
-                      <div className="flex items-center justify-between font-bold text-[#287A74]">
-                        <span>Items Attached from Catalog:</span>
-                        <span>{totalCartCount} items selected</span>
-                      </div>
-                      <div className="mt-1.5 flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-                        {Object.entries(cart).map(([pId, qty]) => {
-                          const prod = PRODUCTS.find((p) => p.id === pId);
-                          if (!prod) return null;
-                          return (
-                            <span
-                              key={pId}
-                              className="rounded-md bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-700 border border-[#287A74]/20"
-                            >
-                              {prod.name} × {qty}
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  <div>
-                    <label htmlFor="rfq-notes" className="mb-1 block text-xs font-bold text-slate-700">
-                      Product Requirements & Delivery Location *
-                    </label>
-                    <textarea
-                      id="rfq-notes"
-                      rows={3}
-                      required
-                      placeholder="List commodities needed (e.g. 5 crates tomatoes, 10 crates water, 2 drums 20L oil) and delivery address..."
-                      value={rfqNotes}
-                      onChange={(e) => setRfqNotes(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs outline-none transition focus:border-[#287A74] focus:bg-white"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full flex items-center justify-center gap-2 rounded-xl bg-amber-500 py-3.5 text-xs font-bold text-slate-950 shadow-md shadow-amber-500/20 transition hover:bg-amber-400 hover:scale-[1.01]"
-                  >
-                    <Send size={14} />
-                    <span>Send Requisition for Immediate Quote</span>
-                  </button>
-
-                  <p className="text-center text-[10px] text-slate-400">
-                    Your details are kept strictly confidential. No spam guaranteed.
-                  </p>
-                </form>
-              )}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          13. FREQUENTLY ASKED QUESTIONS (Accordion)
-      ---------------------------------------------------- */}
-      <section id="faq" className="section-reveal py-20 bg-white">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="text-center">
-            <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-              Clarity & Compliance
-            </span>
-            <h2 className="mt-2 font-display text-3xl font-extrabold text-slate-900 sm:text-4xl">
-              Frequently Asked Questions
-            </h2>
-            <p className="mx-auto mt-2 text-sm text-slate-600">
-              Clear answers on commercial terms, ordering windows, and cold-chain logistics.
-            </p>
-          </div>
-
-          <div className="mt-12 space-y-3">
-            {[
-              {
-                q: "What is your order cutoff time for next-morning delivery in Zanzibar?",
-                a: "For next-morning delivery (between 05:00 AM and 07:30 AM) across Zanzibar (including Stone Town, Nungwi, Kendwa, and Paje), orders should be placed or confirmed by 18:00 (6:00 PM). Standing repeat orders run automatically without daily cutoff requirements.",
-              },
-              {
-                q: "What wholesale egg options (Mayai) do you supply to hotels and bakeries?",
-                a: "Mayai is our #1 bestselling commodity in Zanzibar. We supply Grade-A candled table eggs (Mayai ya Kisasa) and organic free-range eggs (Mayai ya Kienyeji) in standard 30-egg trays and heavy-duty 360-egg master crates. We provide standing daily deliveries to hotel breakfast buffets with a zero-crack guarantee.",
-              },
-              {
-                q: "Which regions and beach resort zones in Zanzibar do you deliver to?",
-                a: "We provide comprehensive island-wide distribution across Zanzibar: Stone Town, Urban West, Northern beach resorts (Nungwi, Kendwa), Eastern shores (Paje, Jambiani, Michamvi), North-East (Kiwengwa, Matemwe), and South (Fumba Town, Kizimkazi), with dedicated coastal connections to Dar es Salaam.",
-              },
-              {
-                q: "What are the payment terms for commercial accounts?",
-                a: "We support flexible corporate terms: Net-15 and Net-30 invoicing for vetted corporate clients, bank transfers, credit terms upon trade reference verification, and Cash/EFT on Delivery for trial orders.",
-              },
-              {
-                q: "Can we combine fresh produce, eggs, beverages, dry grains, and hotel toilet paper on one invoice?",
-                a: "Yes! That is our primary core value. Instead of dealing with separate market vendors for produce, beverages, dry rations, and cleaning supplies, you receive one consolidated morning delivery, one manifest, and one monthly invoice covering eggs, produce, beverages, grains, cooking oil, and hotel toilet paper.",
-              },
-              {
-                q: "How does your quality guarantee and replacement policy work?",
-                a: "We inspect produce both at farm intake and before dispatch. When our driver arrives, your receiving manager checks the consignment. If any crate does not meet your specifications, we replace it on the same morning route run at no extra cost.",
-              },
-              {
-                q: "Do you deliver bulk groceries, rice, beans, and cooking oil to construction sites?",
-                a: "Yes. Our delivery fleet includes heavy-duty all-terrain distribution vehicles capable of accessing active civil works, industrial parks, and high-rise construction zones with safety-compliant PPE drivers delivering 25kg/50kg sacks of rice, flour, beans, and hydration crates.",
-              },
-            ].map((faq, idx) => {
-              const isOpen = openFaq === idx;
-              return (
-                <div
-                  key={faq.q}
-                  className="rounded-2xl border border-slate-200 bg-slate-50/50 transition overflow-hidden"
-                >
-                  <button
-                    onClick={() => setOpenFaq(isOpen ? null : idx)}
-                    className="flex w-full items-center justify-between p-5 text-left text-sm font-bold text-slate-900 hover:text-[#287A74]"
-                  >
-                    <span>{faq.q}</span>
-                    <ChevronDown
-                      size={18}
-                      className={`text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180 text-[#287A74]" : ""
-                        }`}
-                    />
-                  </button>
-                  {isOpen && (
-                    <div className="px-5 pb-5 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-                      {faq.a}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          14. BOTTOM CTA BANNER (Mercora Style)
-      ---------------------------------------------------- */}
-      <section className="section-reveal px-4 py-12 sm:px-6">
-        <div className="mx-auto max-w-7xl overflow-hidden rounded-3xl bg-gradient-to-r from-[#0b2524] via-[#287A74] to-[#389d95] p-8 sm:p-14 text-white shadow-2xl relative">
-          {/* Zanzibar Dhow Maritime Ambient Background */}
-          <div className="pointer-events-none absolute inset-0 opacity-20 mix-blend-overlay">
-            <Image
-              src="/images/zanzibar-dhow.jpg"
-              alt=""
-              fill
-              className="object-cover object-center"
-            />
-          </div>
-          <div className="relative z-10 max-w-2xl space-y-4">
-            <span className="text-xs font-bold tracking-wider uppercase text-amber-300">
-              Upgrade Your Supply Chain Today
-            </span>
-            <h2 className="font-display text-3xl font-extrabold sm:text-4xl lg:text-5xl">
-              Start Sourcing Smarter with MH General Suppliers
-            </h2>
-            <p className="text-slate-200 text-sm sm:text-base leading-relaxed">
-              Consolidate your fresh vegetables, fruits, soft drinks, grains, snacks, and cooking oils under one
-              contract. Speak directly to our logistics team today.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-3.5 pt-4">
-              <a
-                href="#quote-section"
-                className="rounded-xl bg-amber-500 px-7 py-3.5 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-amber-500/30 transition hover:bg-amber-400"
-              >
-                Request Custom Quote
-              </a>
-              <a
-                href="tel:+255779973333"
-                className="flex items-center gap-2 rounded-xl border border-white/30 px-5 py-3.5 text-xs sm:text-sm font-bold text-white backdrop-blur-sm hover:bg-white/10 transition"
-              >
-                <Phone size={16} /> Hotline: 0779 973 333
-              </a>
-              <a
-                href="https://wa.me/255776147097"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-xl border border-emerald-400/50 bg-emerald-600/30 px-5 py-3.5 text-xs sm:text-sm font-bold text-emerald-200 backdrop-blur-sm hover:bg-emerald-600/50 hover:text-white transition"
-              >
-                <MessageSquare size={16} className="text-emerald-400" /> WhatsApp: 0776 147 097
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          14B. COMMERCIAL SOURCING DIRECTORY & SEO KEYWORDS INDEX
-      ---------------------------------------------------- */}
-      <section
-        id="commercial-directory"
-        aria-label="Commercial Wholesale Directory and Keyword Index"
-        className="section-reveal border-t border-slate-200 bg-slate-50 py-16"
-      >
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 border-b border-slate-200 pb-8">
-            <div>
-              <span className="text-xs font-bold tracking-wider uppercase text-[#287A74]">
-                Commercial Index & Search Directory
-              </span>
-              <h2 className="mt-2 font-display text-2xl font-extrabold text-slate-900 sm:text-3xl">
-                Zanzibar Wholesale Food & Operational Supplies Hub
-              </h2>
-              <p className="mt-2 max-w-3xl text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Direct procurement guide for luxury hotels, coastal resorts, catering operations, corporate pantries,
-                and construction camps across Unguja, Pemba, and the coastal corridor.
-              </p>
-            </div>
-            <Link
-              href="/catalog"
-              className="inline-flex items-center gap-2 rounded-xl bg-[#287A74] px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-[#1f5f5a] transition self-start md:self-auto shrink-0"
-            >
-              <span>Explore Complete Catalog</span>
-              <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {/* Group 1: Fresh Eggs (Mayai) */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full inline-block">
-                #1 Bestseller • Zanzibar
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
-                Fresh Farm Eggs (Mayai ya Jumla)
-              </h3>
-              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                Daily machine-sorted and candled eggs in shockproof 30-egg trays and 360-egg master crates for hotel breakfast buffets, bakeries, and kitchens.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {[
-                  "Grade-A Table Eggs",
-                  "Mayai ya Kienyeji",
-                  "Hotel Buffet Standing Orders",
-                  "360-Egg Master Boxes",
-                  "Zero-Crack Guarantee",
-                ].map((tag) => (
-                  <Link
-                    key={tag}
-                    href="/catalog?category=eggs"
-                    className="rounded-md bg-slate-100 hover:bg-amber-100 hover:text-amber-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Group 2: Fresh Produce & Farm Vegetables */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full inline-block">
-                Dawn Farm Harvest
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
-                Vegetables & Tropical Fruits
-              </h3>
-              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                Chef-graded tomatoes, red bulb onions, Irish potatoes, sweet coastal pineapples, bananas, and watermelons delivered directly to dock receivers.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {[
-                  "Roma Tomatoes (Nyanya)",
-                  "Red Bulb Onions (Vitunguu)",
-                  "Highland Potatoes (Viazi)",
-                  "Coastal Pineapples",
-                  "Cavendish Bananas",
-                  "Sweet Watermelons",
-                ].map((tag) => (
-                  <Link
-                    key={tag}
-                    href="/catalog?category=vegetables"
-                    className="rounded-md bg-slate-100 hover:bg-emerald-100 hover:text-emerald-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Group 3: Grains, Cooking Oil & Hygiene */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full inline-block">
-                Bulk Commodities & Paper
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
-                Grains, Oils & Hotel Tissues
-              </h3>
-              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                Aromatic Basmati rice, kidney beans, 20L pure cooking oil, 2-ply luxury hotel toilet paper rolls (48-pack), and executive facial tissue boxes.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {[
-                  "Basmati Rice 25kg",
-                  "Kidney Beans (Maharage)",
-                  "Sunflower Oil 20L",
-                  "Luxury Hotel Toilet Paper",
-                  "Facial Tissue Dispenser Boxes",
-                  "Kitchen Heavy Rolls",
-                ].map((tag) => (
-                  <Link
-                    key={tag}
-                    href="/catalog?category=groceries"
-                    className="rounded-md bg-slate-100 hover:bg-blue-100 hover:text-blue-900 text-slate-700 px-2 py-1 text-[11px] font-medium transition"
-                  >
-                    {tag}
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Group 4: Delivery Zones & Regional Sourcing */}
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <span className="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full inline-block">
-                Island-Wide Coverage
-              </span>
-              <h3 className="mt-2 font-display text-base font-bold text-slate-900">
-                Zanzibar Delivery Zones
-              </h3>
-              <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                Daily scheduled route runs from 05:00 AM across all major tourism hubs, construction projects, and corporate commercial centers.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-1.5">
-                {[
-                  "Stone Town Commercial Hub",
-                  "Nungwi & Kendwa Beach Resorts",
-                  "Paje & Jambiani Hotels",
-                  "Kiwengwa & Matemwe Lodges",
-                  "Fumba Town Projects",
-                  "Dar es Salaam Transit",
-                ].map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded-md bg-slate-100 text-slate-700 px-2 py-1 text-[11px] font-medium"
-                  >
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ----------------------------------------------------
-          15. FOOTER (With Brand Watermark like Mercora full.webp)
-      ---------------------------------------------------- */}
-      <footer className="relative overflow-hidden bg-[#071817] text-white pt-16 pb-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 pb-12 border-b border-white/10">
-            {/* Brand column */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="relative h-10 w-10 overflow-hidden rounded-full border border-white/20">
-                  <Image src="/logo.jpeg" alt="MH Logo" fill className="object-contain" />
-                </div>
-                <span className="font-display text-lg font-extrabold tracking-tight text-white">
-                  MH GENERAL SUPPLIERS
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 leading-relaxed">
-                Wholesale food and commercial distribution. Supplying fresh farm vegetables, seasonal fruits,
-                soft drinks, groceries, snacks, and cooking oil to premier businesses.
-              </p>
-              <div className="flex items-center gap-2 text-xs text-emerald-400">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Cold-Chain Logistics Licensed</span>
-              </div>
-            </div>
-
-            {/* Commodities */}
-            <div>
-              <h4 className="font-display text-sm font-bold text-white uppercase tracking-wider">
-                Supply Categories
-              </h4>
-              <ul className="mt-4 space-y-2 text-xs text-slate-400">
-                <li>
-                  <Link href="/catalog?category=eggs" className="hover:text-amber-400 transition flex items-center justify-between">
-                    <span>Fresh Farm Eggs (Mayai)</span>
-                    <span className="text-[10px] text-amber-400 font-bold">Top Seller</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=vegetables" className="hover:text-amber-400 transition">
-                    Fresh Farm Vegetables
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=fruits" className="hover:text-amber-400 transition">
-                    Orchard & Tropical Fruits
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=beverages" className="hover:text-amber-400 transition">
-                    Soft Drinks & Mineral Water
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=groceries" className="hover:text-amber-400 transition">
-                    Wholesale Rice, Flour & Grains
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=cooking_oil" className="hover:text-amber-400 transition">
-                    Commercial Cooking Oils & Fats
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=hygiene" className="hover:text-amber-400 transition flex items-center justify-between">
-                    <span>Tissues & Hotel Paper Supplies</span>
-                    <span className="text-[10px] text-teal-400 font-bold">Hygiene</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/catalog?category=snacks" className="hover:text-amber-400 transition">
-                    Office Snacks & Breakroom Kits
-                  </Link>
-                </li>
-              </ul>
-            </div>
-
-            {/* Sectors */}
-            <div>
-              <h4 className="font-display text-sm font-bold text-white uppercase tracking-wider">
-                Sectors We Serve
-              </h4>
-              <ul className="mt-4 space-y-2 text-xs text-slate-400">
-                <li>
-                  <a href="#sectors" className="hover:text-amber-400 transition">
-                    Luxury Hotels & Resorts
-                  </a>
-                </li>
-                <li>
-                  <a href="#sectors" className="hover:text-amber-400 transition">
-                    Corporate Offices & Campuses
-                  </a>
-                </li>
-                <li>
-                  <a href="#sectors" className="hover:text-amber-400 transition">
-                    Construction Sites & Worker Camps
-                  </a>
-                </li>
-                <li>
-                  <a href="#sectors" className="hover:text-amber-400 transition">
-                    Restaurants & Catering Companies
-                  </a>
-                </li>
-                <li>
-                  <a href="#sectors" className="hover:text-amber-400 transition">
-                    Hospitals & Institutional Dining
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Contact */}
-            <div>
-              <h4 className="font-display text-sm font-bold text-white uppercase tracking-wider">
-                Logistics Hub • Zanzibar
-              </h4>
-              <ul className="mt-4 space-y-3 text-xs text-slate-400">
-                <li className="flex items-start gap-2">
-                  <Phone size={14} className="text-amber-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="block text-[11px] text-slate-500">Sales &amp; Direct Orders</span>
-                    <a href="tel:+255779973333" className="font-semibold text-slate-200 hover:text-amber-400">
-                      0779 973 333 / +255 779 973 333
-                    </a>
-                  </div>
-                </li>
-                <li className="flex items-start gap-2">
-                  <MessageSquare size={14} className="text-emerald-400 shrink-0 mt-0.5" />
-                  <div>
-                    <span className="block text-[11px] text-slate-500">Customer Support &amp; WhatsApp</span>
-                    <a
-                      href="https://wa.me/255776147097"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="font-semibold text-emerald-300 hover:text-white"
-                    >
-                      0776 147 097 / +255 776 147 097
-                    </a>
-                  </div>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Mail size={14} className="text-amber-400 shrink-0" />
-                  <span>orders@mhsuppliers.co.tz</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <MapPin size={14} className="text-amber-400 shrink-0 mt-0.5" />
-                  <span>Central Wholesale Hub &amp; Malindi Port, Stone Town, Zanzibar</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <Clock size={14} className="text-emerald-400 shrink-0" />
-                  <span>Dispatch: Mon - Sat • 05:00 AM - 18:00 PM</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-8 flex flex-col justify-between items-center gap-4 text-xs text-slate-500 sm:flex-row">
-            <span>© 2026 MH General Suppliers. All rights reserved.</span>
-            <div className="flex gap-6">
-              <a href="#" className="hover:text-slate-300">
-                Privacy Policy
-              </a>
-              <a href="#" className="hover:text-slate-300">
-                Terms of Supply
-              </a>
-              <a href="#" className="hover:text-slate-300">
-                Food Safety Compliance
-              </a>
-            </div>
-          </div>
-        </div>
-
-        {/* Huge Subtle Watermark (Like MERCORA in full.webp) */}
-        <div className="pointer-events-none select-none absolute bottom-0 left-1/2 -translate-x-1/2 font-display text-[15vw] font-black text-white/[0.025] leading-none tracking-tighter whitespace-nowrap">
-          MH SUPPLIERS
-        </div>
-      </footer>
-
-      {/* ----------------------------------------------------
-          16. SLIDE-OVER RFQ BASKET DRAWER
-      ---------------------------------------------------- */}
+      {/* RFQ Basket Drawer */}
       {isCartOpen && (
         <div className="fixed inset-0 z-50 flex justify-end bg-slate-950/60 backdrop-blur-sm">
           <div className="flex h-full w-full max-w-md flex-col justify-between bg-white p-6 shadow-2xl">
@@ -2329,12 +569,8 @@ export default function Landing() {
               {totalCartCount === 0 ? (
                 <div className="py-20 text-center">
                   <ShoppingBag size={48} className="mx-auto text-slate-300" />
-                  <h4 className="mt-4 font-display text-base font-bold text-slate-800">
-                    Your basket is currently empty
-                  </h4>
-                  <p className="mt-1 text-xs text-slate-500">
-                    Add commodities from the wholesale catalog to generate an instant quotation.
-                  </p>
+                  <h4 className="mt-4 font-display text-base font-bold text-slate-800">Your basket is currently empty</h4>
+                  <p className="mt-1 text-xs text-slate-500">Add commodities from the wholesale catalog to generate an instant quotation.</p>
                   <Link
                     href="/catalog"
                     onClick={() => setIsCartOpen(false)}
@@ -2350,28 +586,18 @@ export default function Landing() {
                     const prod = PRODUCTS.find((p) => p.id === pId);
                     if (!prod) return null;
                     return (
-                      <div
-                        key={pId}
-                        className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs"
-                      >
+                      <div key={pId} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-3 text-xs">
                         <div className="pr-2">
                           <h4 className="font-bold text-slate-900">{prod.name}</h4>
                           <span className="text-[11px] text-slate-500">{prod.packSize}</span>
                           <span className="block font-semibold text-[#287A74]">{prod.priceEstimate}</span>
                         </div>
-
                         <div className="flex items-center rounded-lg border border-slate-200 bg-white">
-                          <button
-                            onClick={() => updateQuantity(pId, -1)}
-                            className="p-1 text-slate-600 hover:text-red-600"
-                          >
+                          <button onClick={() => updateQuantity(pId, -1)} className="p-1 text-slate-600 hover:text-red-600">
                             <Minus size={12} />
                           </button>
                           <span className="w-6 text-center font-bold text-slate-900">{qty}</span>
-                          <button
-                            onClick={() => updateQuantity(pId, 1)}
-                            className="p-1 text-slate-600 hover:text-emerald-600"
-                          >
+                          <button onClick={() => updateQuantity(pId, 1)} className="p-1 text-slate-600 hover:text-emerald-600">
                             <Plus size={12} />
                           </button>
                         </div>
@@ -2388,29 +614,14 @@ export default function Landing() {
                   <span>Total Selected Units:</span>
                   <span className="text-base text-[#287A74]">{totalCartCount} Packs</span>
                 </div>
-                <a
-                  href="#quote-section"
+                <Link
+                  href="/quote"
                   onClick={() => setIsCartOpen(false)}
                   className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#287A74] py-3 text-xs font-bold text-white hover:bg-[#328e87] transition"
                 >
                   <span>Proceed to Finalize RFQ</span>
                   <ArrowRight size={14} />
-                </a>
-                <a
-                  href={`https://wa.me/255776147097?text=Habari%20MH%20General%20Suppliers%20Zanzibar,%20I%20would%20like%20to%20order%20the%20following%20items:%0A%0A${Object.entries(cart)
-                    .map(([id, qty]) => {
-                      const p = PRODUCTS.find((prod) => prod.id === id);
-                      return p ? `• ${p.name} - ${qty} x ${p.packSize}` : null;
-                    })
-                    .filter(Boolean)
-                    .join("%0A")}%0A%0APlease%20confirm%20delivery%20schedule%20and%20rates.`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-emerald-500 bg-emerald-50 py-2.5 text-xs font-bold text-emerald-800 hover:bg-emerald-100 transition"
-                >
-                  <MessageSquare size={14} className="text-emerald-600" />
-                  <span>Send Order to WhatsApp (0776 147 097)</span>
-                </a>
+                </Link>
                 <button
                   onClick={() => setCart({})}
                   className="w-full text-center text-[11px] font-semibold text-slate-400 hover:text-red-600"
@@ -2423,9 +634,7 @@ export default function Landing() {
         </div>
       )}
 
-      {/* ----------------------------------------------------
-          17. STICKY FLOATING QUICK-ORDER SUMMARY BAR (Desktop)
-      ---------------------------------------------------- */}
+      {/* Sticky Cart Bar */}
       {totalCartCount > 0 && !isCartOpen && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-11/12 max-w-xl">
           <div className="flex items-center justify-between rounded-2xl border border-white/30 bg-[#287A74]/95 px-5 py-3.5 text-white shadow-2xl backdrop-blur-md">
@@ -2438,7 +647,6 @@ export default function Landing() {
                 <span className="text-slate-300">Ready to submit for instant itemized pricing</span>
               </div>
             </div>
-
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsCartOpen(true)}
@@ -2446,23 +654,22 @@ export default function Landing() {
               >
                 Review
               </button>
-              <a
-                href="#quote-section"
+              <Link
+                href="/quote"
                 className="rounded-lg bg-amber-500 px-4 py-1.5 text-xs font-bold text-slate-950 hover:bg-amber-400 transition"
               >
                 Get Quote
-              </a>
+              </Link>
             </div>
           </div>
         </div>
       )}
 
-      {/* ----------------------------------------------------
-          18. FLOATING BACK TO TOP WITH SCROLL PROGRESS RING
-      ---------------------------------------------------- */}
+      {/* Back to Top */}
       <div
-        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
-          }`}
+        className={`fixed bottom-6 right-6 z-40 transition-all duration-300 ${
+          showBackToTop ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"
+        }`}
       >
         <button
           onClick={() => scrollTo(0)}
@@ -2470,21 +677,9 @@ export default function Landing() {
           aria-label="Scroll to top"
         >
           <svg className="absolute inset-0 -rotate-90" width="48" height="48">
+            <circle cx="24" cy="24" r="20" stroke="#e2e8f0" strokeWidth="2.5" fill="transparent" />
             <circle
-              cx="24"
-              cy="24"
-              r="20"
-              stroke="#e2e8f0"
-              strokeWidth="2.5"
-              fill="transparent"
-            />
-            <circle
-              cx="24"
-              cy="24"
-              r="20"
-              stroke="#287A74"
-              strokeWidth="2.5"
-              fill="transparent"
+              cx="24" cy="24" r="20" stroke="#287A74" strokeWidth="2.5" fill="transparent"
               strokeDasharray={125.6}
               strokeDashoffset={125.6 - (125.6 * scrollPercentage) / 100}
               strokeLinecap="round"
@@ -2498,9 +693,7 @@ export default function Landing() {
         </button>
       </div>
 
-      {/* ----------------------------------------------------
-          19. FLOATING ZANZIBAR CONTACT & WHATSAPP DOCK (Bottom Left)
-      ---------------------------------------------------- */}
+      {/* Floating WhatsApp + Call */}
       <div className="fixed bottom-6 left-6 z-40 flex items-center gap-2">
         <a
           href="https://wa.me/255776147097?text=Habari%20MH%20Suppliers%2C%20I%20would%20like%20to%20inquire%20about%20wholesale%20supplies"
